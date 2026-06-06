@@ -7,6 +7,7 @@ from backend.app.models.user import User
 from backend.app.models.role import Role
 from backend.app.schemas.user import UserResponse, UserUpdate, UserListResponse, UserCreate
 from backend.app.core.security import get_password_hash
+from backend.app.core.audit import log_audit
 
 router = APIRouter()
 
@@ -68,6 +69,9 @@ def create_user(
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    
+    log_audit(db, current_user.id, "CREATE", "User", str(db_user.id), f"Created User: {db_user.email}")
+    
     return db_user
 
 @router.patch("/{user_id}", response_model=UserResponse)
@@ -102,4 +106,7 @@ def update_user(
         
     db.commit()
     db.refresh(user)
+    
+    log_audit(db, current_user.id, "UPDATE", "User", str(user.id), f"Updated User: {user.email}")
+    
     return user

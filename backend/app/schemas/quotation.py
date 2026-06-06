@@ -59,3 +59,4 @@ class QuotationListResponse(QuotationResponse):
     rfq_title: str | None = None
     manager_name: str | None = None
     financer_name: str | None = None
+    has_po: bool = False

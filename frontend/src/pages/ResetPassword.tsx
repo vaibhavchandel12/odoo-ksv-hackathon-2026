@@ -65,13 +65,13 @@ export const ResetPassword: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-      <div className="w-full max-w-[460px] rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+      <div className="w-full max-w-[460px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 shadow-xl">
         <div className="flex flex-col items-center text-center mb-8">
           <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#2563EB] text-white shadow-lg shadow-blue-500/10 mb-4">
             <Shield className="h-6 w-6" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">Reset Password</h1>
-          <p className="mt-2 text-sm text-slate-500 max-w-[320px]">
+          <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Reset Password</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-[320px]">
             Define a secure new password for your enterprise profile
           </p>
         </div>
@@ -104,8 +104,8 @@ export const ResetPassword: React.FC = () => {
               <CheckCircle2 className="h-16 w-16" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-display text-lg font-bold text-slate-900">Password Updated</h3>
-              <p className="text-sm text-slate-500">
+              <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Password Updated</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Your new password has been applied. You may now sign in using your new credentials.
               </p>
             </div>
@@ -119,7 +119,7 @@ export const ResetPassword: React.FC = () => {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <label htmlFor="password" className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <label htmlFor="password" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 New Password
               </label>
               <div className="relative">
@@ -131,15 +131,15 @@ export const ResetPassword: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
                   disabled={!token}
-                  className={`block w-full rounded-lg border bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 shadow-sm outline-none ${
-                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                  className={`block w-full rounded-lg border bg-white dark:bg-slate-900 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                   }`}
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-400 focus:outline-none"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -150,7 +150,7 @@ export const ResetPassword: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -162,8 +162,8 @@ export const ResetPassword: React.FC = () => {
                   type="password"
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
                   disabled={!token}
-                  className={`block w-full rounded-lg border bg-white py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-sm outline-none ${
-                    errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                  className={`block w-full rounded-lg border bg-white dark:bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                    errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                   }`}
                   {...register('confirmPassword')}
                 />

@@ -11,7 +11,7 @@ class PurchaseOrder(Base):
     po_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     vendor_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     quotation_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("quotations.id", ondelete="SET NULL"), nullable=True)
-    status: Mapped[str] = mapped_column(String(50), default="Pending Payment", nullable=False)
+    status: Mapped[str] = mapped_column(String(50), default="Pending Bill", nullable=False)
     
     po_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     due_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.utcnow() + timedelta(days=30))

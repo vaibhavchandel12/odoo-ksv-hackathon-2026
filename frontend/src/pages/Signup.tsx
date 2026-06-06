@@ -112,16 +112,16 @@ export const Signup: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-[#F8FAFC]">
       {/* Top Header */}
-      <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 md:px-12 shadow-sm">
+      <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 md:px-12 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563EB]">
             <Shield className="h-5.5 w-5.5 text-white" />
           </div>
-          <span className="font-display text-xl font-bold tracking-tight text-slate-900">
+          <span className="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             VendorBridge
           </span>
         </div>
-        <div className="text-sm text-slate-500">
+        <div className="text-sm text-slate-500 dark:text-slate-400">
           Already have an account?{' '}
           <Link to="/login" className="font-semibold text-[#2563EB] hover:underline hover:text-blue-700">
             Sign In
@@ -131,7 +131,7 @@ export const Signup: React.FC = () => {
 
       {/* Main Container */}
       <main className="flex flex-1 items-center justify-center p-6">
-        <div className="w-full max-w-[600px] rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+        <div className="w-full max-w-[600px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 shadow-xl">
           
           {/* Step Progress Bar */}
           <div className="mb-10">
@@ -156,15 +156,15 @@ export const Signup: React.FC = () => {
                         isCompleted
                           ? 'border-[#2563EB] bg-[#2563EB] text-white'
                           : isActive
-                          ? 'border-[#2563EB] bg-white text-[#2563EB] shadow-md shadow-blue-500/10 scale-110'
-                          : 'border-slate-200 bg-white text-slate-400'
+                          ? 'border-[#2563EB] bg-white dark:bg-slate-900 text-[#2563EB] shadow-md shadow-blue-500/10 scale-110'
+                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-400'
                       }`}
                     >
                       {isCompleted ? <Check className="h-5 w-5" /> : <StepIcon className="h-4 w-4" />}
                     </div>
                     <span
                       className={`mt-2 text-xs font-semibold uppercase tracking-wider hidden sm:block ${
-                        isActive ? 'text-[#2563EB]' : isCompleted ? 'text-slate-700' : 'text-slate-400'
+                        isActive ? 'text-[#2563EB]' : isCompleted ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400'
                       }`}
                     >
                       {s.label}
@@ -176,10 +176,10 @@ export const Signup: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <h2 className="font-display text-2xl font-bold text-slate-900">
+            <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">
               Create Enterprise Account
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Step {step} of 3: Fill in your {stepsHeader[step - 1].label.toLowerCase()} details.
             </p>
           </div>
@@ -197,15 +197,15 @@ export const Signup: React.FC = () => {
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1">
-                    <label htmlFor="first_name" className="text-xs font-semibold text-slate-700 uppercase">
+                    <label htmlFor="first_name" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                       First Name
                     </label>
                     <input
                       id="first_name"
                       type="text"
                       placeholder="Jane"
-                      className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                        errors.first_name ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                      className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                        errors.first_name ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                       }`}
                       {...register('first_name')}
                     />
@@ -214,15 +214,15 @@ export const Signup: React.FC = () => {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="last_name" className="text-xs font-semibold text-slate-700 uppercase">
+                    <label htmlFor="last_name" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                       Last Name
                     </label>
                     <input
                       id="last_name"
                       type="text"
                       placeholder="Doe"
-                      className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                        errors.last_name ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                      className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                        errors.last_name ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                       }`}
                       {...register('last_name')}
                     />
@@ -238,15 +238,15 @@ export const Signup: React.FC = () => {
             {step === 2 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="space-y-1">
-                  <label htmlFor="email" className="text-xs font-semibold text-slate-700 uppercase">
+                  <label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                     Email Address
                   </label>
                   <input
                     id="email"
                     type="email"
                     placeholder="jane.doe@company.com"
-                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                     }`}
                     {...register('email')}
                   />
@@ -255,15 +255,15 @@ export const Signup: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="phone" className="text-xs font-semibold text-slate-700 uppercase">
+                  <label htmlFor="phone" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                     Phone Number
                   </label>
                   <input
                     id="phone"
                     type="tel"
                     placeholder="+1 (555) 019-2834"
-                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                      errors.phone ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                      errors.phone ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                     }`}
                     {...register('phone')}
                   />
@@ -272,15 +272,15 @@ export const Signup: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="gst_details" className="text-xs font-semibold text-slate-700 uppercase">
+                  <label htmlFor="gst_details" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                     GST Number / Details (Optional)
                   </label>
                   <input
                     id="gst_details"
                     type="text"
                     placeholder="e.g. 22AAAAA0000A1Z5"
-                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                      errors.gst_details ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                      errors.gst_details ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                     }`}
                     {...register('gst_details')}
                   />
@@ -295,15 +295,15 @@ export const Signup: React.FC = () => {
             {step === 3 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="space-y-1">
-                  <label htmlFor="password" className="text-xs font-semibold text-slate-700 uppercase">
+                  <label htmlFor="password" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                     Password
                   </label>
                   <input
                     id="password"
                     type="password"
                     placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                      errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                      errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                     }`}
                     {...register('password')}
                   />
@@ -312,15 +312,15 @@ export const Signup: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 uppercase">
+                  <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase">
                     Confirm Password
                   </label>
                   <input
                     id="confirmPassword"
                     type="password"
                     placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
-                      errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    className={`block w-full rounded-lg border bg-white dark:bg-slate-900 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                      errors.confirmPassword ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                     }`}
                     {...register('confirmPassword')}
                   />
@@ -333,12 +333,12 @@ export const Signup: React.FC = () => {
 
             {/* Removed Step 4: Role Assignment */}
             {/* Action Buttons */}
-            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+            <div className="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-800">
               {step > 1 ? (
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer focus:outline-none"
+                  className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 cursor-pointer focus:outline-none"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Back</span>

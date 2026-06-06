@@ -8,7 +8,9 @@ from backend.app.models.user import User
 from backend.app.models.rfq import RFQ
 from backend.app.models.quotation import Quotation, QuotationLine
 from backend.app.models.product import Product
+from backend.app.models.purchase_order import PurchaseOrder
 from backend.app.schemas.quotation import QuotationCreate, QuotationUpdate, QuotationListResponse, QuotationLineResponse
+from backend.app.core.audit import log_audit
 
 router = APIRouter()
 
@@ -35,6 +37,11 @@ def create_quotation(
     )
     db.add(db_quotation)
     db.flush() # flush to get the quotation ID
+
+    # Auto-update RFQ status if this is the first quotation
+    if rfq.status == "Sent to Vendor":
+        rfq.status = "Reviewed Quotations"
+        db.add(rfq)
 
     lines_response = []
     
@@ -71,15 +78,26 @@ def create_quotation(
     db.commit()
     db.refresh(db_quotation)
     
+    log_audit(db, current_user.id, "CREATE", "Quotation", str(db_quotation.id), f"Vendor {current_user.first_name} submitted quotation for RFQ")
+
     return QuotationListResponse(
         id=db_quotation.id,
         vendor_id=db_quotation.vendor_id,
         rfq_id=db_quotation.rfq_id,
         status=db_quotation.status,
+        manager_status=db_quotation.manager_status,
+        financer_status=db_quotation.financer_status,
+        manager_remarks=db_quotation.manager_remarks,
+        financer_remarks=db_quotation.financer_remarks,
+        manager_approved_at=db_quotation.manager_approved_at,
+        financer_approved_at=db_quotation.financer_approved_at,
         created_at=db_quotation.created_at,
         updated_at=db_quotation.updated_at,
         vendor_name=f"{current_user.first_name} {current_user.last_name}",
         rfq_title=rfq.title,
+        manager_name=None,
+        financer_name=None,
+        has_po=False,
         lines=lines_response
     )
 
@@ -96,6 +114,8 @@ def get_quotations(
     query = db.query(Quotation).options(
         joinedload(Quotation.vendor),
         joinedload(Quotation.rfq),
+        joinedload(Quotation.manager),
+        joinedload(Quotation.financer),
         joinedload(Quotation.lines).joinedload(QuotationLine.product)
     )
     
@@ -105,6 +125,11 @@ def get_quotations(
         raise HTTPException(status_code=403, detail="Not enough permissions")
         
     quotations = query.all()
+    
+    # Check which quotations have purchase orders
+    quotation_ids = [q.id for q in quotations]
+    pos = db.query(PurchaseOrder.quotation_id).filter(PurchaseOrder.quotation_id.in_(quotation_ids)).all()
+    po_quotation_ids = {po[0] for po in pos}
     
     result = []
     for q in quotations:
@@ -126,10 +151,19 @@ def get_quotations(
             vendor_id=q.vendor_id,
             rfq_id=q.rfq_id,
             status=q.status,
+            manager_status=q.manager_status,
+            financer_status=q.financer_status,
+            manager_remarks=q.manager_remarks,
+            financer_remarks=q.financer_remarks,
+            manager_approved_at=q.manager_approved_at,
+            financer_approved_at=q.financer_approved_at,
             created_at=q.created_at,
             updated_at=q.updated_at,
             vendor_name=f"{q.vendor.first_name} {q.vendor.last_name}" if q.vendor else "Unknown",
             rfq_title=q.rfq.title if q.rfq else "Unknown",
+            manager_name=f"{q.manager.first_name} {q.manager.last_name}" if q.manager else None,
+            financer_name=f"{q.financer.first_name} {q.financer.last_name}" if q.financer else None,
+            has_po=q.id in po_quotation_ids,
             lines=lines_resp
         ))
     return result
@@ -205,6 +239,8 @@ def update_quotation_status(
     db.commit()
     db.refresh(quotation)
     
+    log_audit(db, current_user.id, "UPDATE", "Quotation", str(quotation.id), f"Quotation updated by {role} - Overall Status: {quotation.status}")
+    
     lines_resp = []
     for line in quotation.lines:
         lines_resp.append(QuotationLineResponse(
@@ -235,5 +271,6 @@ def update_quotation_status(
         rfq_title=quotation.rfq.title if quotation.rfq else "Unknown",
         manager_name=f"{quotation.manager.first_name} {quotation.manager.last_name}" if quotation.manager else None,
         financer_name=f"{quotation.financer.first_name} {quotation.financer.last_name}" if quotation.financer else None,
+        has_po=db.query(PurchaseOrder).filter(PurchaseOrder.quotation_id == quotation.id).first() is not None,
         lines=lines_resp
     )

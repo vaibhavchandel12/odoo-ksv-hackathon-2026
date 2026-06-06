@@ -19,7 +19,7 @@ if os.path.exists(env_path):
 else:
     print(f"WARNING: env file not found at {env_path}")
 
-print("=== VendorBridge Supabase Table Initializer ===")
+print("=== VendorBridge Local Database Initializer ===")
 
 try:
     from backend.app.core.config import settings

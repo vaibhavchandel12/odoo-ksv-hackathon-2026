@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
+from backend.app.api import deps
+from backend.app.models.user import User
+from backend.app.core.audit import log_audit
 from backend.app.core.database import SessionLocal
 from backend.app.models.product import Product
 from backend.app.schemas.product import ProductCreate, ProductRead, ProductUpdate
@@ -16,11 +19,12 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
-def create_product(product_in: ProductCreate, db: Session = Depends(get_db)):
+def create_product(product_in: ProductCreate, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)):
     db_product = Product(**product_in.model_dump())
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
+    log_audit(db, current_user.id, "CREATE", "Product", str(db_product.id), f"Created product: {db_product.name}")
     return db_product
 
 @router.get("/", response_model=List[ProductRead])
@@ -36,7 +40,7 @@ def read_product(product_id: str, db: Session = Depends(get_db)):
     return product
 
 @router.put("/{product_id}", response_model=ProductRead)
-def update_product(product_id: str, product_in: ProductUpdate, db: Session = Depends(get_db)):
+def update_product(product_id: str, product_in: ProductUpdate, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -47,14 +51,16 @@ def update_product(product_id: str, product_in: ProductUpdate, db: Session = Dep
         
     db.commit()
     db.refresh(product)
+    log_audit(db, current_user.id, "UPDATE", "Product", str(product.id), f"Updated product: {product.name}")
     return product
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_product(product_id: str, db: Session = Depends(get_db)):
+def delete_product(product_id: str, db: Session = Depends(get_db), current_user: User = Depends(deps.get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
         
     db.delete(product)
     db.commit()
+    log_audit(db, current_user.id, "DELETE", "Product", str(product_id), f"Deleted product: {product.name}")
     return None

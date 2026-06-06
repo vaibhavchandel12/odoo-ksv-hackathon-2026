@@ -56,24 +56,24 @@ export function CategoryCreate() {
   return (
     <AppLayout showBack={true}>
       <div className="max-w-2xl mx-auto p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">{isEditMode ? 'Edit Category' : 'Add New Category'}</h1>
-        <form onSubmit={handleSubmit} className="bg-white/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl space-y-6 border border-white/50">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-8">{isEditMode ? 'Edit Category' : 'Add New Category'}</h1>
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl space-y-6 border border-white/50">
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Category Name</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category Name</label>
             <input
               type="text"
               required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white/50"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Parent Category (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Parent Category (Optional)</label>
             <select
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900"
               value={formData.parent_id}
               onChange={e => setFormData({...formData, parent_id: e.target.value})}
             >

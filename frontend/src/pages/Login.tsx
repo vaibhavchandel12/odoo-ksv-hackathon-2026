@@ -102,7 +102,7 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative z-10 flex justify-between text-xs text-slate-500">
+        <div className="relative z-10 flex justify-between text-xs text-slate-500 dark:text-slate-400">
           <span>&copy; {new Date().getFullYear()} VendorBridge ERP. All rights reserved.</span>
           <span className="hover:text-slate-400 cursor-pointer">Security &amp; Compliance</span>
         </div>
@@ -117,13 +117,13 @@ export const Login: React.FC = () => {
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#2563EB] text-white">
                 <Shield className="h-5 w-5" />
               </div>
-              <span className="font-display text-xl font-bold text-slate-900">VendorBridge</span>
+              <span className="font-display text-xl font-bold text-slate-900 dark:text-white">VendorBridge</span>
             </div>
             
-            <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900">
+            <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               Sign in to platform
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Enter your enterprise credentials to access your portal
             </p>
           </div>
@@ -139,7 +139,7 @@ export const Login: React.FC = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Corporate Email Address
               </label>
               <div className="relative">
@@ -150,8 +150,8 @@ export const Login: React.FC = () => {
                   id="email"
                   type="email"
                   placeholder="name@company.com"
-                  className={`block w-full rounded-lg border bg-white py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 ${
-                    errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                  className={`block w-full rounded-lg border bg-white dark:bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white shadow-sm outline-none transition-colors placeholder:text-slate-400 ${
+                    errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                   }`}
                   {...register('email')}
                 />
@@ -163,7 +163,7 @@ export const Login: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <label htmlFor="password" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   Password
                 </label>
                 <Link
@@ -181,15 +181,15 @@ export const Login: React.FC = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                  className={`block w-full rounded-lg border bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 shadow-sm outline-none transition-colors placeholder:text-slate-400 ${
-                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                  className={`block w-full rounded-lg border bg-white dark:bg-slate-900 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white shadow-sm outline-none transition-colors placeholder:text-slate-400 ${
+                    errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                   }`}
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-400 focus:outline-none"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -218,7 +218,7 @@ export const Login: React.FC = () => {
             </button>
           </form>
 
-          <div className="text-center text-sm text-slate-500">
+          <div className="text-center text-sm text-slate-500 dark:text-slate-400">
             Don't have an account?{' '}
             <Link to="/signup" className="font-semibold text-[#2563EB] hover:underline hover:text-blue-700">
               Create an account

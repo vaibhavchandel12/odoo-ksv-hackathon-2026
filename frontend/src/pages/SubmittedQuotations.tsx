@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { AppLayout } from '../components/AppLayout';
-import { Clock, CheckCircle, XCircle, ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, ChevronDown, ChevronUp, Filter, X, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import { useTableFilterSort } from '../hooks/useTableFilterSort';
 
 export function SubmittedQuotations() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,6 +15,11 @@ export function SubmittedQuotations() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showComparison, setShowComparison] = useState(false);
+
+  const { searchTerm, setSearchTerm, sortConfig, requestSort, processedData } = useTableFilterSort(
+    quotations, 
+    ['rfq_title', 'vendor_name', 'status']
+  );
 
   useEffect(() => {
     fetchData();
@@ -82,7 +88,7 @@ export function SubmittedQuotations() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-display font-bold text-slate-900">Submitted Quotations</h1>
+              <h1 className="text-3xl font-display font-bold text-slate-900 dark:text-white">Submitted Quotations</h1>
               {filterRfqId && (
                 <button 
                   onClick={() => setSearchParams({})}
@@ -94,7 +100,7 @@ export function SubmittedQuotations() {
                 </button>
               )}
             </div>
-            <p className="text-sm text-slate-500 mt-1">Review and manage quotations from vendors.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Review and manage quotations from vendors.</p>
           </div>
           {selectedIds.size > 0 && (
             <button 
@@ -106,46 +112,65 @@ export function SubmittedQuotations() {
           )}
         </div>
 
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search quotations by RFQ title, vendor, or status..."
+              className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white dark:bg-slate-900 shadow-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+
         {loading ? (
           <div className="flex justify-center py-12"><div className="animate-spin h-8 w-8 border-4 border-[#2563EB] rounded-full border-t-transparent"></div></div>
         ) : (
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 border-b border-slate-100 text-xs font-bold uppercase text-slate-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+              <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="px-6 py-4 w-12"></th>
                   <th className="px-6 py-4 w-8"></th>
-                  <th className="px-6 py-4">RFQ Title</th>
-                  <th className="px-6 py-4">Vendor</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:bg-slate-800 transition-colors" onClick={() => requestSort('rfq_title')}>
+                    <div className="flex items-center gap-1">RFQ Title {sortConfig?.key === 'rfq_title' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-50" />}</div>
+                  </th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:bg-slate-800 transition-colors" onClick={() => requestSort('vendor_name')}>
+                    <div className="flex items-center gap-1">Vendor {sortConfig?.key === 'vendor_name' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-50" />}</div>
+                  </th>
                   <th className="px-6 py-4">Items</th>
                   <th className="px-6 py-4">Total Value</th>
-                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:bg-slate-800 transition-colors" onClick={() => requestSort('status')}>
+                    <div className="flex items-center gap-1">Status {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-50" />}</div>
+                  </th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {quotations.map(q => {
+                {processedData.map(q => {
                   const totalValue = q.lines.reduce((sum: number, line: any) => sum + (line.price * line.quantity), 0);
                   const isExpanded = expandedId === q.id;
 
                   return (
                     <React.Fragment key={q.id}>
-                      <tr className={`hover:bg-slate-50/50 transition-colors cursor-pointer ${isExpanded ? 'bg-slate-50' : ''}`} onClick={() => toggleExpand(q.id)}>
+                      <tr className={`hover:bg-slate-50/50 dark:bg-slate-800/50 transition-colors cursor-pointer ${isExpanded ? 'bg-slate-50 dark:bg-slate-800' : ''}`} onClick={() => toggleExpand(q.id)}>
                         <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                           <input 
                             type="checkbox" 
                             checked={selectedIds.has(q.id)} 
                             onChange={() => toggleSelect(q.id)}
-                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                            className="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
                           />
                         </td>
                         <td className="px-6 py-4">
                           {isExpanded ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
                         </td>
-                        <td className="px-6 py-4 font-medium text-slate-900">{q.rfq_title}</td>
-                        <td className="px-6 py-4 text-slate-700">{q.vendor_name}</td>
-                        <td className="px-6 py-4 text-slate-500">{q.lines.length} items</td>
-                        <td className="px-6 py-4 font-semibold text-slate-700">${totalValue.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{q.rfq_title}</td>
+                        <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{q.vendor_name}</td>
+                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{q.lines.length} items</td>
+                        <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{totalValue.toFixed(2)}</td>
                         <td className="px-6 py-4">{getStatusBadge(q.status)}</td>
                         <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                           {q.status === 'Pending' && (
@@ -164,11 +189,11 @@ export function SubmittedQuotations() {
                               </button>
                             </div>
                           )}
-                          {q.status === 'Approved' && (
+                          {q.status === 'Approved' && !q.has_po && (
                             <div className="flex items-center justify-end gap-2">
                               <button 
                                 onClick={() => updateStatus(q.id, 'Rejected')}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold transition-colors"
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold transition-colors"
                               >
                                 Reject
                               </button>
@@ -187,16 +212,23 @@ export function SubmittedQuotations() {
                               </button>
                             </div>
                           )}
+                          {q.status === 'Approved' && q.has_po && (
+                            <div className="flex items-center justify-end">
+                              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-100">
+                                PO Created
+                              </span>
+                            </div>
+                          )}
                         </td>
                       </tr>
                       {isExpanded && (
                         <tr>
-                          <td colSpan={8} className="px-0 py-0 bg-slate-50/50 border-b border-slate-100">
+                          <td colSpan={8} className="px-0 py-0 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                             <div className="px-14 py-4">
-                              <h4 className="text-xs font-bold uppercase text-slate-500 mb-3">Line Items</h4>
-                              <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                                <table className="w-full text-left text-sm text-slate-600">
-                                  <thead className="bg-slate-100/50 border-b border-slate-200 text-xs font-semibold text-slate-500">
+                              <h4 className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-3">Line Items</h4>
+                              <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                                  <thead className="bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-500 dark:text-slate-400">
                                     <tr>
                                       <th className="px-4 py-2">Product</th>
                                       <th className="px-4 py-2">Vendor Code</th>
@@ -209,12 +241,12 @@ export function SubmittedQuotations() {
                                   <tbody className="divide-y divide-slate-100">
                                     {q.lines.map((line: any) => (
                                       <tr key={line.id}>
-                                        <td className="px-4 py-3 font-medium text-slate-900">{line.product_name}</td>
-                                        <td className="px-4 py-3 text-slate-500">{line.vendor_code}</td>
-                                        <td className="px-4 py-3 text-slate-700">{line.quantity}</td>
-                                        <td className="px-4 py-3 text-slate-700">${line.price.toFixed(2)}</td>
-                                        <td className="px-4 py-3 font-semibold text-slate-700">${(line.price * line.quantity).toFixed(2)}</td>
-                                        <td className="px-4 py-3 text-slate-500">{line.lead_time_days ? `${line.lead_time_days} days` : '-'}</td>
+                                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{line.product_name}</td>
+                                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.vendor_code}</td>
+                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{line.quantity}</td>
+                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">₹{line.price.toFixed(2)}</td>
+                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">₹{(line.price * line.quantity).toFixed(2)}</td>
+                                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.lead_time_days ? `${line.lead_time_days} days` : '-'}</td>
                                       </tr>
                                     ))}
                                   </tbody>
@@ -227,9 +259,9 @@ export function SubmittedQuotations() {
                     </React.Fragment>
                   );
                 })}
-                {quotations.length === 0 && (
+                {processedData.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-slate-500">No quotations have been submitted yet.</td>
+                    <td colSpan={8} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No quotations found.</td>
                   </tr>
                 )}
               </tbody>
@@ -240,37 +272,37 @@ export function SubmittedQuotations() {
         {/* Comparison Modal */}
         {showComparison && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden border border-slate-200 animate-fadeIn max-h-[90vh] flex flex-col">
-              <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-                <h3 className="font-bold text-slate-900 font-display">Quotation Comparison</h3>
-                <button onClick={() => setShowComparison(false)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-fadeIn max-h-[90vh] flex flex-col">
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+                <h3 className="font-bold text-slate-900 dark:text-white font-display">Quotation Comparison</h3>
+                <button onClick={() => setShowComparison(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-400 text-xl leading-none">&times;</button>
               </div>
               <div className="overflow-x-auto overflow-y-auto flex-1 p-6">
                 <div className="flex gap-6 min-w-max">
                   {quotations.filter(q => selectedIds.has(q.id)).map(q => {
                     const totalValue = q.lines.reduce((sum: number, line: any) => sum + (line.price * line.quantity), 0);
                     return (
-                      <div key={q.id} className="w-80 border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col">
-                        <div className="mb-4 pb-4 border-b border-slate-100">
-                          <h4 className="font-bold text-lg text-slate-900 mb-1">{q.vendor_name}</h4>
-                          <p className="text-xs text-slate-500">RFQ: {q.rfq_title}</p>
+                      <div key={q.id} className="w-80 border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
+                        <div className="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                          <h4 className="font-bold text-lg text-slate-900 dark:text-white mb-1">{q.vendor_name}</h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">RFQ: {q.rfq_title}</p>
                         </div>
                         
                         <div className="flex-1 space-y-4">
-                          <div className="bg-slate-50 p-3 rounded-lg">
-                            <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Total Value</span>
-                            <span className="text-xl font-display font-bold text-indigo-600">${totalValue.toFixed(2)}</span>
+                          <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                            <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Value</span>
+                            <span className="text-xl font-display font-bold text-indigo-600">₹{totalValue.toFixed(2)}</span>
                           </div>
                           
                           <div>
-                            <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Line Items</span>
+                            <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Line Items</span>
                             <div className="space-y-2">
                               {q.lines.map((line: any) => (
-                                <div key={line.id} className="bg-slate-50 border border-slate-100 p-2 rounded text-sm">
-                                  <div className="font-semibold text-slate-800">{line.product_name}</div>
-                                  <div className="flex justify-between text-xs text-slate-500 mt-1">
-                                    <span>{line.quantity} units @ ${line.price.toFixed(2)}</span>
-                                    <span className="font-medium">${(line.quantity * line.price).toFixed(2)}</span>
+                                <div key={line.id} className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 p-2 rounded text-sm">
+                                  <div className="font-semibold text-slate-800 dark:text-slate-200">{line.product_name}</div>
+                                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    <span>{line.quantity} units @ ₹{line.price.toFixed(2)}</span>
+                                    <span className="font-medium">₹{(line.quantity * line.price).toFixed(2)}</span>
                                   </div>
                                   {line.lead_time_days && (
                                     <div className="text-xs text-emerald-600 mt-1">Lead time: {line.lead_time_days} days</div>
@@ -281,7 +313,7 @@ export function SubmittedQuotations() {
                           </div>
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-slate-100 flex gap-2">
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-2">
                           <button 
                             onClick={() => {
                               updateStatus(q.id, 'Approved');

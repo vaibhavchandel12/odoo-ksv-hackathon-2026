@@ -6,5 +6,6 @@ from backend.app.models.product import Product
 from backend.app.models.rfq import RFQ
 from backend.app.models.quotation import Quotation, QuotationLine
 from backend.app.models.purchase_order import PurchaseOrder, PurchaseOrderLine
+from backend.app.models.audit_log import AuditLog
 
-__all__ = ["Base", "Role", "User", "Category", "Product", "RFQ", "Quotation", "QuotationLine", "PurchaseOrder", "PurchaseOrderLine"]
+__all__ = ["Base", "Role", "User", "Category", "Product", "RFQ", "Quotation", "QuotationLine", "PurchaseOrder", "PurchaseOrderLine", "AuditLog"]

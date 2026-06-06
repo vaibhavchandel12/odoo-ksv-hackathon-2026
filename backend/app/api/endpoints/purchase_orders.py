@@ -9,6 +9,7 @@ from backend.app.models.user import User
 from backend.app.models.quotation import Quotation, QuotationLine
 from backend.app.models.purchase_order import PurchaseOrder, PurchaseOrderLine
 from backend.app.schemas.purchase_order import PurchaseOrderCreate, PurchaseOrderResponse, PurchaseOrderLineResponse
+from backend.app.core.audit import log_audit
 
 router = APIRouter()
 
@@ -54,7 +55,7 @@ def create_purchase_order(
         po_number=po_number,
         vendor_id=quotation.vendor_id,
         quotation_id=quotation.id,
-        status="Pending Payment",
+        status="Pending Bill",
         po_date=datetime.utcnow(),
         due_date=datetime.utcnow() + timedelta(days=30),
         subtotal=subtotal,
@@ -77,6 +78,8 @@ def create_purchase_order(
 
     db.commit()
     db.refresh(db_po)
+    
+    log_audit(db, current_user.id, "CREATE", "PurchaseOrder", str(db_po.id), f"Generated PO: {db_po.po_number}")
     
     return _format_po_response(db_po, db)
 
@@ -124,6 +127,35 @@ def get_purchase_order(
     return _format_po_response(po, db)
 
 
+@router.patch("/{po_id}/create-bill", response_model=PurchaseOrderResponse)
+def create_po_bill(
+    po_id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.RoleChecker(["Admin", "Manager", "Procurement Officer"]))
+):
+    try:
+        po_uuid = uuid.UUID(po_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid PO ID")
+
+    po = db.query(PurchaseOrder).filter(PurchaseOrder.id == po_uuid).first()
+    if not po:
+        raise HTTPException(status_code=404, detail="Purchase Order not found")
+        
+    po.status = "Billed"
+    db.commit()
+    db.refresh(po)
+    
+    log_audit(db, current_user.id, "UPDATE", "PurchaseOrder", str(po.id), f"Created Bill for PO: {po.po_number}")
+    
+    po_full = db.query(PurchaseOrder).options(
+        joinedload(PurchaseOrder.vendor),
+        joinedload(PurchaseOrder.lines).joinedload(PurchaseOrderLine.product)
+    ).filter(PurchaseOrder.id == po_uuid).first()
+    
+    return _format_po_response(po_full, db)
+
+
 @router.patch("/{po_id}/pay", response_model=PurchaseOrderResponse)
 def mark_po_as_paid(
     po_id: str,
@@ -142,6 +174,8 @@ def mark_po_as_paid(
     po.status = "Paid"
     db.commit()
     db.refresh(po)
+    
+    log_audit(db, current_user.id, "UPDATE", "PurchaseOrder", str(po.id), f"Marked PO as Paid: {po.po_number}")
     
     po_full = db.query(PurchaseOrder).options(
         joinedload(PurchaseOrder.vendor),

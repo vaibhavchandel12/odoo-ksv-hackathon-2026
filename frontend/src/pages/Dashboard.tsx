@@ -28,7 +28,7 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC]">
+    <div className="flex h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors">
       {/* Sidebar */}
       <aside className="hidden md:flex w-64 flex-col bg-[#0F172A] text-white">
         <div className="flex h-16 items-center gap-3 border-b border-slate-800 px-6">
@@ -40,7 +40,7 @@ export const Dashboard: React.FC = () => {
         
         {/* Navigation links based on role */}
         <nav className="flex-1 space-y-1 px-4 py-6">
-          <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             ERP Workspace
           </div>
           
@@ -77,11 +77,11 @@ export const Dashboard: React.FC = () => {
                 <FileText className="h-4 w-4" />
                 <span>All Quotations</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/purchase-orders" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <ShoppingCart className="h-4 w-4" />
                 <span>Purchase Orders</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/system-audits" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <Settings className="h-4 w-4" />
                 <span>System Audits</span>
               </a>
@@ -94,7 +94,7 @@ export const Dashboard: React.FC = () => {
                 <Users className="h-4 w-4" />
                 <span>Vendors</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/rfqs" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <ClipboardList className="h-4 w-4" />
                 <span>Requests for Quotation</span>
               </a>
@@ -102,7 +102,7 @@ export const Dashboard: React.FC = () => {
                 <FileText className="h-4 w-4" />
                 <span>Submitted Quotations</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/purchase-orders" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <ShoppingCart className="h-4 w-4" />
                 <span>Purchase Orders</span>
               </a>
@@ -144,7 +144,7 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-semibold text-white truncate">{user?.first_name} {user?.last_name}</p>
-              <p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase truncate">{user?.role?.name}</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase truncate">{user?.role?.name}</p>
             </div>
           </div>
         </div>
@@ -153,9 +153,9 @@ export const Dashboard: React.FC = () => {
       {/* Main Panel */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm">
+        <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 shadow-sm transition-colors">
           <div className="flex items-center gap-2">
-            <h1 className="font-display font-bold text-slate-900">
+            <h1 className="font-display font-bold text-slate-900 dark:text-white">
               Welcome back, {user?.first_name}
             </h1>
             <span className="hidden sm:inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
@@ -165,7 +165,7 @@ export const Dashboard: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <div className="hidden lg:flex flex-col items-end text-right">
-              <span className="text-xs font-semibold text-slate-800">{user?.first_name} {user?.last_name}</span>
+              <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{user?.first_name} {user?.last_name}</span>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{user?.role?.name}</span>
             </div>
             
@@ -174,7 +174,7 @@ export const Dashboard: React.FC = () => {
                 logout();
                 navigate('/login');
               }}
-              className="flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 cursor-pointer"
+              className="flex h-9 items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 hover:border-red-100 cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -190,63 +190,63 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-8 animate-fadeIn">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Total System Users</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total System Users</span>
                     <div className="rounded-lg bg-blue-50 p-2 text-blue-600"><Users className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">148</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">148</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; +12 this week</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Database Sync</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Database Sync</span>
                     <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600"><Database className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">100%</p>
-                  <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; Supabase connected</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">100%</p>
+                  <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; Local SQLite connected</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">API Health Index</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">API Health Index</span>
                     <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600"><Cpu className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">99.98%</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; Latency 24ms</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">99.98%</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; Latency 24ms</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Active Roles</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Roles</span>
                     <div className="rounded-lg bg-amber-50 p-2 text-amber-600"><Shield className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">4</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; Preloaded in database</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">4</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; Preloaded in database</p>
                 </div>
               </div>
 
               {/* Core Work area */}
-              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
-                  <h3 className="font-display text-lg font-bold text-slate-900">System Activity &amp; Profiles</h3>
-                  <p className="text-xs text-slate-500">List of recently registered users across all roles</p>
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+                <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 py-5">
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">System Activity &amp; Profiles</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">List of recently registered users across all roles</p>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-4 flex items-center justify-between">
                     <div className="flex gap-3 items-center">
                       <Shield className="h-5 w-5 text-[#2563EB]" />
                       <div className="text-sm">
-                        <span className="font-semibold text-slate-800">Admin Control Panel Active</span>
-                        <p className="text-xs text-slate-600">You have full administrative privileges to edit settings, roles and security credentials.</p>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">Admin Control Panel Active</span>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">You have full administrative privileges to edit settings, roles and security credentials.</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => handleActionClick("Trigger Database Seed")}
-                      className="rounded-lg bg-white border border-slate-200 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-sm cursor-pointer"
+                      className="rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 shadow-sm cursor-pointer"
                     >
                       Audit Trail
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-100 p-6 text-center text-slate-500 text-sm">
+                  <div className="rounded-lg border border-slate-100 dark:border-slate-800 p-6 text-center text-slate-500 dark:text-slate-400 text-sm">
                     No security alerts detected. User management operations are running normally.
                   </div>
                 </div>
@@ -259,47 +259,47 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-8 animate-fadeIn">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Active RFQs</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active RFQs</span>
                     <div className="rounded-lg bg-blue-50 p-2 text-blue-600"><ClipboardList className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">24</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">24</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; 4 open for bidding</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Received Bids</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Received Bids</span>
                     <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600"><FileText className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">89</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">89</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; +14 new quotations</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Purchase Orders</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Purchase Orders</span>
                     <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600"><ShoppingCart className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">42</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; 8 pending approval</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">42</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; 8 pending approval</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Invoices</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Invoices</span>
                     <div className="rounded-lg bg-amber-50 p-2 text-amber-600"><DollarSign className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">18</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">18</p>
                   <p className="mt-1 text-xs text-red-600 font-semibold">&bull; 3 unpaid invoices</p>
                 </div>
               </div>
 
               {/* Core Actions */}
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                  <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-5 flex items-center justify-between">
+                <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+                  <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 py-5 flex items-center justify-between">
                     <div>
-                      <h3 className="font-display text-lg font-bold text-slate-900">Active Requests for Quotation</h3>
-                      <p className="text-xs text-slate-500">Manage quotations and purchase requisitions</p>
+                      <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Active Requests for Quotation</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Manage quotations and purchase requisitions</p>
                     </div>
                     <button 
                       onClick={() => handleActionClick("Create new RFQ")}
@@ -310,8 +310,8 @@ export const Dashboard: React.FC = () => {
                     </button>
                   </div>
                   <div className="p-6">
-                    <table className="w-full text-left text-sm text-slate-600">
-                      <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500">
+                    <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                      <thead className="bg-slate-50 dark:bg-slate-800 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
                         <tr>
                           <th className="px-4 py-3">RFQ ID</th>
                           <th className="px-4 py-3">Title</th>
@@ -321,19 +321,19 @@ export const Dashboard: React.FC = () => {
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         <tr>
-                          <td className="px-4 py-3 font-semibold text-slate-900">RFQ-2026-001</td>
+                          <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">RFQ-2026-001</td>
                           <td className="px-4 py-3">Raw Steel Materials Procurement</td>
                           <td className="px-4 py-3">June 15, 2026</td>
                           <td className="px-4 py-3"><span className="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-xs font-semibold text-blue-700">Open Bidding</span></td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 font-semibold text-slate-900">RFQ-2026-002</td>
+                          <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">RFQ-2026-002</td>
                           <td className="px-4 py-3">Office Hardware Equipment Setup</td>
                           <td className="px-4 py-3">June 20, 2026</td>
                           <td className="px-4 py-3"><span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-700">Draft</span></td>
                         </tr>
                         <tr>
-                          <td className="px-4 py-3 font-semibold text-slate-900">RFQ-2026-003</td>
+                          <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white">RFQ-2026-003</td>
                           <td className="px-4 py-3">Logistics Packaging Cartons</td>
                           <td className="px-4 py-3">June 10, 2026</td>
                           <td className="px-4 py-3"><span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-xs font-semibold text-emerald-700">Completed</span></td>
@@ -343,18 +343,18 @@ export const Dashboard: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between">
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm flex flex-col justify-between">
                   <div className="space-y-4">
-                    <h3 className="font-display text-lg font-bold text-slate-900">Procurement Officer Actions</h3>
-                    <p className="text-xs text-slate-500">Shortcuts to create common procurement records</p>
+                    <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Procurement Officer Actions</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Shortcuts to create common procurement records</p>
                     <div className="space-y-2">
-                      <button onClick={() => handleActionClick("Create Purchase Order")} className="w-full text-left rounded-lg border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                      <button onClick={() => handleActionClick("Create Purchase Order")} className="w-full text-left rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 cursor-pointer">
                         &bull; Generate Purchase Order
                       </button>
-                      <button onClick={() => handleActionClick("Log Supplier Invoice")} className="w-full text-left rounded-lg border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                      <button onClick={() => handleActionClick("Log Supplier Invoice")} className="w-full text-left rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 cursor-pointer">
                         &bull; Record Supplier Invoice
                       </button>
-                      <button onClick={() => handleActionClick("Compare Supplier Bids")} className="w-full text-left rounded-lg border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                      <button onClick={() => handleActionClick("Compare Supplier Bids")} className="w-full text-left rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 cursor-pointer">
                         &bull; Bid Comparison Worksheet
                       </button>
                     </div>
@@ -369,54 +369,54 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-8 animate-fadeIn">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Approvals</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pending Approvals</span>
                     <div className="rounded-lg bg-amber-50 p-2 text-amber-600"><ClipboardList className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">9</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">9</p>
                   <p className="mt-1 text-xs text-red-600 font-semibold">&bull; requires immediate action</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Approved Value</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Approved Value</span>
                     <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600"><DollarSign className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">$340K</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; this fiscal month</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">₹340K</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; this fiscal month</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Approval Turnaround</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Approval Turnaround</span>
                     <div className="rounded-lg bg-blue-50 p-2 text-blue-600"><Cpu className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">4.2h</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">4.2h</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; -1.5h compared to target</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Purchase Value</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Purchase Value</span>
                     <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600"><TrendingUp className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">$1.2M</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; annual total spend</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">₹1.2M</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; annual total spend</p>
                 </div>
               </div>
 
               {/* Core Approvals List */}
-              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
-                  <h3 className="font-display text-lg font-bold text-slate-900">Requisition Approval Queue</h3>
-                  <p className="text-xs text-slate-500">Review and authorize pending purchase orders and RFQs</p>
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+                <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 py-5">
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Requisition Approval Queue</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Review and authorize pending purchase orders and RFQs</p>
                 </div>
                 <div className="divide-y divide-slate-100">
                   <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-900">PO-2026-981 - Industrial Steel Supply</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">PO-2026-981 - Industrial Steel Supply</span>
                         <span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Requires Sign-off</span>
                       </div>
-                      <p className="text-xs text-slate-500">Requested by: Procurement Officer | Amount: <span className="font-bold text-slate-800">$42,500.00</span></p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Requested by: Procurement Officer | Amount: <span className="font-bold text-slate-800 dark:text-slate-200">₹42,500.00</span></p>
                     </div>
                     <div className="flex gap-2 shrink-0">
                       <button 
@@ -437,10 +437,10 @@ export const Dashboard: React.FC = () => {
                   <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-900">PO-2026-982 - Dell Hardware Workstations</span>
+                        <span className="font-semibold text-slate-900 dark:text-white">PO-2026-982 - Dell Hardware Workstations</span>
                         <span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-700">Requires Sign-off</span>
                       </div>
-                      <p className="text-xs text-slate-500">Requested by: IT Procurement | Amount: <span className="font-bold text-slate-800">$18,900.00</span></p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Requested by: IT Procurement | Amount: <span className="font-bold text-slate-800 dark:text-slate-200">₹18,900.00</span></p>
                     </div>
                     <div className="flex gap-2 shrink-0">
                       <button 
@@ -467,54 +467,54 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-8 animate-fadeIn">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Available RFQs</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Available RFQs</span>
                     <div className="rounded-lg bg-blue-50 p-2 text-blue-600"><ClipboardList className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">12</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; open for bidding</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">12</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; open for bidding</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Submitted Bids</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Submitted Bids</span>
                     <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600"><Send className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">4</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">4</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; 2 active, 2 under review</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Awarded Contracts</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Awarded Contracts</span>
                     <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600"><Award className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">2</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">2</p>
                   <p className="mt-1 text-xs text-emerald-600 font-semibold">&bull; in execution</p>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Invoiced</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pending Invoiced</span>
                     <div className="rounded-lg bg-amber-50 p-2 text-amber-600"><DollarSign className="h-5 w-5" /></div>
                   </div>
-                  <p className="mt-2 text-3xl font-display font-bold text-slate-900">$8,450</p>
-                  <p className="mt-1 text-xs text-slate-500">&bull; await client payout</p>
+                  <p className="mt-2 text-3xl font-display font-bold text-slate-900 dark:text-white">₹8,450</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">&bull; await client payout</p>
                 </div>
               </div>
 
               {/* Vendor RFQ list */}
-              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-5">
-                  <h3 className="font-display text-lg font-bold text-slate-900">Vendor Bid Portal - Active Requests</h3>
-                  <p className="text-xs text-slate-500">View corporate RFQs and submit quotation packages</p>
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+                <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 py-5">
+                  <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Vendor Bid Portal - Active Requests</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">View corporate RFQs and submit quotation packages</p>
                 </div>
                 <div className="p-6">
-                  <div className="rounded-lg border border-slate-100 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="rounded-lg border border-slate-100 dark:border-slate-800 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-800">RFQ-2026-001 - Raw Steel Materials Procurement</span>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">RFQ-2026-001 - Raw Steel Materials Procurement</span>
                         <span className="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-semibold text-blue-700">Open Bidding</span>
                       </div>
-                      <p className="text-xs text-slate-500">Requested by: VendorBridge Procurement Team | Deadline: June 15, 2026</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Requested by: VendorBridge Procurement Team | Deadline: June 15, 2026</p>
                     </div>
                     <button 
                       onClick={() => handleActionClick("Submit Quotation for RFQ-2026-001")}

@@ -4,7 +4,7 @@ from backend.app.core.config import settings
 from backend.app.core.database import engine, SessionLocal
 from backend.app.models.base import Base
 from backend.app.models.role import Role
-from backend.app.api.endpoints import auth, users, roles, categories, products, quotations, rfqs, purchase_orders
+from backend.app.api.endpoints import auth, users, roles, categories, products, quotations, rfqs, purchase_orders, audits
 
 # Auto-create tables (useful for local SQLite fallback and initializing postgres)
 Base.metadata.create_all(bind=engine)
@@ -48,6 +48,7 @@ app.include_router(products.router, prefix=f"{settings.API_V1_STR}/products", ta
 app.include_router(rfqs.router, prefix=f"{settings.API_V1_STR}/rfqs", tags=["rfqs"])
 app.include_router(quotations.router, prefix=f"{settings.API_V1_STR}/quotations", tags=["quotations"])
 app.include_router(purchase_orders.router, prefix=f"{settings.API_V1_STR}/purchase-orders", tags=["purchase-orders"])
+app.include_router(audits.router, prefix=f"{settings.API_V1_STR}/audits", tags=["audits"])
 
 @app.get("/")
 def root():

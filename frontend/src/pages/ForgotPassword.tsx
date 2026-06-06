@@ -53,13 +53,13 @@ export const ForgotPassword: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-      <div className="w-full max-w-[460px] rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+      <div className="w-full max-w-[460px] rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 shadow-xl">
         <div className="flex flex-col items-center text-center mb-8">
           <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#2563EB] text-white shadow-lg shadow-blue-500/10 mb-4">
             <Shield className="h-6 w-6" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">Forgot Password</h1>
-          <p className="mt-2 text-sm text-slate-500 max-w-[320px]">
+          <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Forgot Password</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-[320px]">
             Provide your corporate email and we'll transmit a password recovery link
           </p>
         </div>
@@ -80,8 +80,8 @@ export const ForgotPassword: React.FC = () => {
               <CheckCircle2 className="h-16 w-16" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-display text-lg font-bold text-slate-900">Recovery Sent</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Recovery Sent</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                 If the email is active in our ERP database, a recovery token link was logged to the terminal console.
               </p>
             </div>
@@ -92,7 +92,7 @@ export const ForgotPassword: React.FC = () => {
                 <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
                   Developer Testing Mode
                 </span>
-                <p className="mt-1 text-xs text-slate-600">
+                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
                   You can click below to bypass checking logs and test password reset immediately:
                 </p>
                 <Link
@@ -106,7 +106,7 @@ export const ForgotPassword: React.FC = () => {
 
             <Link
               to="/login"
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Return to Login</span>
@@ -115,7 +115,7 @@ export const ForgotPassword: React.FC = () => {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Corporate Email Address
               </label>
               <div className="relative">
@@ -126,8 +126,8 @@ export const ForgotPassword: React.FC = () => {
                   id="email"
                   type="email"
                   placeholder="name@company.com"
-                  className={`block w-full rounded-lg border bg-white py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-sm outline-none ${
-                    errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                  className={`block w-full rounded-lg border bg-white dark:bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white shadow-sm outline-none ${
+                    errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-[#2563EB]'
                   }`}
                   {...register('email')}
                 />
@@ -154,7 +154,7 @@ export const ForgotPassword: React.FC = () => {
 
             <Link
               to="/login"
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Login</span>

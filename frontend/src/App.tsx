@@ -16,11 +16,17 @@ import { SubmittedQuotations } from './pages/SubmittedQuotations';
 import { CreateRFQ } from './pages/CreateRFQ';
 import { RFQsList } from './pages/RFQsList';
 import { VendorsList } from './pages/VendorsList';
+import { BillsList } from './pages/BillsList';
 import { PurchaseOrderDetail } from './pages/PurchaseOrderDetail';
+import { PurchaseOrdersList } from './pages/PurchaseOrdersList';
+import { BillView } from './pages/BillView';
+import { SystemAudits } from './pages/SystemAudits';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <Router>
         <Routes>
           {/* Public Authentication Pages */}
@@ -121,11 +127,48 @@ function App() {
             } 
           />
 
+          <Route 
+            path="/purchase-orders" 
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}>
+                <PurchaseOrdersList />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/bills" 
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Financer']}>
+                <BillsList />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/bills/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Financer', 'Manager', 'Procurement Officer']}>
+                <BillView />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/system-audits" 
+            element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <SystemAudits />
+              </ProtectedRoute>
+            } 
+          />
+
           {/* Fallback Redirection */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

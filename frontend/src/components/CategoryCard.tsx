@@ -13,15 +13,15 @@ interface CategoryCardProps {
 
 export function CategoryCard({ category, parentName, onEdit, onDelete }: CategoryCardProps) {
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 shadow-md hover:shadow-lg transition-all duration-300">
-      <h3 className="text-lg font-semibold text-gray-800">{category.name}</h3>
+    <div className="bg-white dark:bg-slate-900/10 backdrop-blur-md rounded-xl p-5 border border-white/20 shadow-md hover:shadow-lg transition-all duration-300">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{category.name}</h3>
       {category.parent_id && (
-        <span className="text-sm text-gray-500 mt-2 block">
+        <span className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2 block">
           Parent: {parentName || category.parent_id}
         </span>
       )}
       {(onEdit || onDelete) && (
-        <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 flex gap-2">
           {onEdit && (
             <button 
               onClick={() => onEdit(category.id)}

@@ -6,6 +6,7 @@ from backend.app.models.rfq import RFQ, RFQLine
 from backend.app.models.user import User
 from backend.app.schemas.rfq import RFQCreate, RFQUpdate, RFQResponse
 from backend.app.core.email import send_rfq_email_to_vendor
+from backend.app.core.audit import log_audit
 
 router = APIRouter()
 
@@ -42,6 +43,8 @@ def create_rfq(
 
     db.commit()
     db.refresh(db_rfq)
+    
+    log_audit(db, current_user.id, "CREATE", "RFQ", str(db_rfq.id), f"Created RFQ: {db_rfq.title}")
     
     # Send email notification if sent to vendor
     if db_rfq.status == "Sent to Vendor":
@@ -93,6 +96,8 @@ def update_rfq(
     if not db_rfq:
         raise HTTPException(status_code=404, detail="RFQ not found")
 
+    old_status = db_rfq.status
+
     db_rfq.title = rfq_in.title
     db_rfq.description = rfq_in.description
     db_rfq.category_id = rfq_in.category_id
@@ -120,8 +125,10 @@ def update_rfq(
     db.commit()
     db.refresh(db_rfq)
 
+    log_audit(db, current_user.id, "UPDATE", "RFQ", str(db_rfq.id), f"Updated RFQ: {db_rfq.title}")
+
     # Optionally send email if status changed to Sent to Vendor
-    if db_rfq.status == "Sent to Vendor":
+    if db_rfq.status == "Sent to Vendor" and old_status != "Sent to Vendor":
         for vendor in db_rfq.vendors:
             send_rfq_email_to_vendor(vendor.email, vendor.first_name, db_rfq.title)
 

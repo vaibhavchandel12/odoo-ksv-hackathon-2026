@@ -140,14 +140,14 @@ export function CreateRFQ() {
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{isEditMode ? 'Edit RFQ' : 'Create RFQ'}</h1>
-            <p className="text-gray-500">{isEditMode ? 'Update existing Request for Quotation' : 'New Request for Quotation'}</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">{isEditMode ? 'Edit RFQ' : 'Create RFQ'}</h1>
+            <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">{isEditMode ? 'Update existing Request for Quotation' : 'New Request for Quotation'}</p>
           </div>
           {isEditMode && (
             <button
               type="button"
-              onClick={() => navigate(`/quotations?rfq_id=${id}`)}
-              className="bg-white border border-gray-200 shadow-sm hover:bg-gray-50 text-indigo-600 px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors"
+              onClick={() => navigate(`/submitted-quotations?rfq_id=${id}`)}
+              className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 text-indigo-600 px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors"
             >
               <FileText className="h-5 w-5" />
               <span>{quotationCount} Quotations</span>
@@ -160,206 +160,217 @@ export function CreateRFQ() {
           <div className="flex items-center relative w-full px-8">
             <div className="absolute top-1/2 left-8 right-8 h-0.5 bg-gray-200 -z-10" />
             
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-full border-2 border-indigo-600 bg-white flex items-center justify-center text-indigo-600 font-bold shadow-md shadow-indigo-200">
-                1
-              </div>
-              <span className="text-sm font-semibold text-indigo-600">Draft</span>
-            </div>
-            
-            <div className="flex-1" />
-            
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-gray-400 font-bold">
-                2
-              </div>
-              <span className="text-sm font-medium text-gray-500">Sent to Vendor</span>
-            </div>
-
-            <div className="flex-1" />
-            
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-gray-400 font-bold">
-                3
-              </div>
-              <span className="text-sm font-medium text-gray-500">Reviewed Quotations</span>
-            </div>
+            {['Draft', 'Sent to Vendor', 'Reviewed Quotations'].map((step, index) => {
+              const steps = ['Draft', 'Sent to Vendor', 'Reviewed Quotations', 'PO Created'];
+              const currentIdx = steps.indexOf(formData.status) === -1 ? 0 : steps.indexOf(formData.status);
+              const isCompleted = index < currentIdx;
+              const isActive = index === currentIdx;
+              
+              return (
+                <React.Fragment key={step}>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold ${isActive ? 'border-indigo-600 bg-white dark:bg-slate-900 text-indigo-600 shadow-md shadow-indigo-200' : isCompleted ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900 text-gray-400 dark:text-gray-500'}`}>
+                      {isCompleted ? '✓' : index + 1}
+                    </div>
+                    <span className={`text-sm ${isActive ? 'font-semibold text-indigo-600' : isCompleted ? 'font-medium text-indigo-600' : 'font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500'}`}>{step}</span>
+                  </div>
+                  {index < 2 && <div className="flex-1" />}
+                </React.Fragment>
+              )
+            })}
           </div>
         </div>
 
-        <div className="bg-white/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/50">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            {/* Left Column */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">RFQ Title*</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50"
-                  placeholder="Office Furniture procurement Q2"
-                  value={formData.title}
-                  onChange={e => setFormData({...formData, title: e.target.value})}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <select
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50"
-                  value={formData.category_id}
-                  onChange={e => setFormData({...formData, category_id: e.target.value})}
-                >
-                  <option value="">Select Category</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">GST Percentage</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50"
-                  value={formData.gst_percentage}
-                  onChange={e => setFormData({...formData, gst_percentage: parseFloat(e.target.value) || 0})}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Deadline*</label>
-                <input
-                  type="date"
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50"
-                  value={formData.deadline ? formData.deadline.split('T')[0] : ''}
-                  onChange={e => setFormData({...formData, deadline: e.target.value ? new Date(e.target.value).toISOString() : ''})}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50 h-32 resize-none"
-                  placeholder="Ergonomic chairs and standing desks..."
-                  value={formData.description}
-                  onChange={e => setFormData({...formData, description: e.target.value})}
-                />
-              </div>
+        <div className="bg-white dark:bg-slate-900/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/50">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">RFQ Title*</label>
+              <input
+                type="text"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                placeholder="Office Furniture procurement Q2"
+                value={formData.title}
+                onChange={e => setFormData({...formData, title: e.target.value})}
+              />
             </div>
 
-            {/* Right Column */}
-            <div className="space-y-6">
-              
-              {/* Line Items */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Line Items (Products)</label>
-                <div className="space-y-3 mb-3">
-                  {lines.map((line, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-white/60 p-2 rounded-lg border border-gray-200">
-                      <select
-                        className="flex-1 bg-transparent border-none text-sm focus:ring-0 outline-none"
-                        value={line.product_id}
-                        onChange={e => handleLineChange(idx, 'product_id', e.target.value)}
-                      >
-                        <option value="">Select Product...</option>
-                        {products.map(p => (
-                          <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
-                      </select>
-                      <input 
-                        type="number" 
-                        className="w-20 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:ring-indigo-500 outline-none" 
-                        min="1"
-                        placeholder="Qty"
-                        value={line.quantity}
-                        onChange={e => handleLineChange(idx, 'quantity', parseInt(e.target.value))}
-                      />
-                      <input 
-                        type="text" 
-                        className="w-16 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:ring-indigo-500 outline-none" 
-                        placeholder="Unit"
-                        value={line.unit}
-                        onChange={e => handleLineChange(idx, 'unit', e.target.value)}
-                      />
-                      <button onClick={() => handleRemoveLine(idx)} className="text-red-500 hover:text-red-700 p-1">
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <button 
-                  type="button"
-                  onClick={handleAddLine}
-                  className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                >
-                  <Plus size={16} className="mr-1" /> Add Product Line
-                </button>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+              <select
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                value={formData.category_id}
+                onChange={e => setFormData({...formData, category_id: e.target.value})}
+              >
+                <option value="">Select Category</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
 
-              {/* Assign Vendors */}
-              <div className="pt-4 border-t border-gray-200">
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium text-gray-700 uppercase tracking-wide">Assign Vendors</label>
-                  <button 
-                    type="button" 
-                    onClick={handleSelectAllVendors}
-                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 rounded"
-                  >
-                    Select All
-                  </button>
-                </div>
-                
-                <div className="bg-white/60 border border-gray-200 rounded-lg p-3">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {selectedVendors.map(vendor => (
-                      <div key={vendor.id} className="flex items-center gap-1 bg-white border border-gray-300 shadow-sm px-2 py-1 rounded-md text-sm">
-                        <span className="font-medium text-gray-700">{vendor.first_name} {vendor.last_name}</span>
-                        <button type="button" onClick={() => handleRemoveVendor(vendor.id)} className="text-gray-400 hover:text-red-500">
-                          <X size={14} />
-                        </button>
-                      </div>
-                    ))}
-                    {selectedVendors.length === 0 && (
-                      <span className="text-sm text-gray-400 italic">No vendors selected</span>
-                    )}
-                  </div>
-                  
-                  <select 
-                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                    onChange={handleAddVendor}
-                    value=""
-                  >
-                    <option value="" disabled>+ Add Vendor</option>
-                    {vendors.map(v => (
-                      <option key={v.id} value={v.id}>{v.first_name} {v.last_name} ({v.email})</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GST Percentage</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                value={formData.gst_percentage}
+                onChange={e => setFormData({...formData, gst_percentage: parseFloat(e.target.value) || 0})}
+              />
+            </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deadline*</label>
+              <input
+                type="date"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                value={formData.deadline ? formData.deadline.split('T')[0] : ''}
+                onChange={e => setFormData({...formData, deadline: e.target.value ? new Date(e.target.value).toISOString() : ''})}
+              />
             </div>
           </div>
 
-          <div className="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-4 justify-end">
-            <button 
-              type="button"
-              onClick={(e) => handleSubmit(e, 'Draft')}
-              className="px-6 py-2.5 rounded-xl font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              Save as Draft
-            </button>
-            <button 
-              type="button"
-              onClick={(e) => handleSubmit(e, 'Sent to Vendor')}
-              className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
-            >
-              Save & Send to Vendors
-            </button>
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+            <textarea
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50 h-24 resize-none"
+              placeholder="Ergonomic chairs and standing desks..."
+              value={formData.description}
+              onChange={e => setFormData({...formData, description: e.target.value})}
+            />
+          </div>
+
+          {/* Line Items */}
+          <div className="mb-8 p-6 bg-slate-50/50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Line Items (Products)</label>
+              <button 
+                type="button"
+                onClick={handleAddLine}
+                className="flex items-center text-sm font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <Plus size={16} className="mr-1" /> Add Product
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {lines.map((line, idx) => (
+                <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+                  <div className="flex-1 w-full">
+                    <select
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                      value={line.product_id}
+                      onChange={e => handleLineChange(idx, 'product_id', e.target.value)}
+                    >
+                      <option value="">Select Product...</option>
+                      {products.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <input 
+                      type="number" 
+                      className="w-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+                      min="1"
+                      placeholder="Qty"
+                      value={line.quantity}
+                      onChange={e => handleLineChange(idx, 'quantity', parseInt(e.target.value))}
+                    />
+                    <input 
+                      type="text" 
+                      className="w-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+                      placeholder="Unit"
+                      value={line.unit}
+                      onChange={e => handleLineChange(idx, 'unit', e.target.value)}
+                    />
+                    <button onClick={() => handleRemoveLine(idx)} className="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2 rounded-md transition-colors ml-auto sm:ml-0">
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {lines.length === 0 && (
+                <div className="text-center py-6 text-slate-400 text-sm border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+                  No products added yet. Click "Add Product" to start.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Assign Vendors */}
+          <div className="mb-4 p-6 bg-indigo-50/30 rounded-xl border border-indigo-100">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Assign Vendors</label>
+              <button 
+                type="button" 
+                onClick={handleSelectAllVendors}
+                className="text-xs font-semibold text-indigo-700 hover:text-indigo-800 bg-indigo-100 hover:bg-indigo-200 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Select All Vendors
+              </button>
+            </div>
+            
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm rounded-lg p-4">
+              <div className="flex flex-wrap gap-2 mb-4 min-h-[2rem]">
+                {selectedVendors.map(vendor => (
+                  <div key={vendor.id} className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-md text-sm group transition-all hover:border-slate-300 dark:border-slate-600">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{vendor.first_name} {vendor.last_name}</span>
+                    <button type="button" onClick={() => handleRemoveVendor(vendor.id)} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+                {selectedVendors.length === 0 && (
+                  <div className="flex items-center justify-center w-full py-2 text-sm text-slate-400 italic">
+                    No vendors selected for this RFQ
+                  </div>
+                )}
+              </div>
+              
+              <select 
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
+                onChange={handleAddVendor}
+                value=""
+              >
+                <option value="" disabled>+ Click to add a vendor...</option>
+                {vendors.map(v => (
+                  <option key={v.id} value={v.id}>{v.first_name} {v.last_name} ({v.email})</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 justify-end">
+            {formData.status === 'Draft' ? (
+              <>
+                <button 
+                  type="button"
+                  onClick={(e) => handleSubmit(e, 'Draft')}
+                  className="px-6 py-2.5 rounded-xl font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-900 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:bg-gray-800 transition-colors"
+                >
+                  Save as Draft
+                </button>
+                <button 
+                  type="button"
+                  onClick={(e) => handleSubmit(e, 'Sent to Vendor')}
+                  className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
+                >
+                  Save & Send to Vendors
+                </button>
+              </>
+            ) : (
+              <button 
+                type="button"
+                onClick={(e) => handleSubmit(e, formData.status)}
+                className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
+              >
+                Save Changes
+              </button>
+            )}
           </div>
         </div>
       </div>
