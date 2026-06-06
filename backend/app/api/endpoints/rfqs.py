@@ -49,7 +49,7 @@ def create_rfq(
     # Send email notification if sent to vendor
     if db_rfq.status == "Sent to Vendor":
         for vendor in db_rfq.vendors:
-            send_rfq_email_to_vendor(vendor.email, vendor.first_name, db_rfq.title)
+            send_rfq_email_to_vendor(vendor.email, vendor.first_name, db_rfq)
 
     return db_rfq
 
@@ -130,6 +130,6 @@ def update_rfq(
     # Optionally send email if status changed to Sent to Vendor
     if db_rfq.status == "Sent to Vendor" and old_status != "Sent to Vendor":
         for vendor in db_rfq.vendors:
-            send_rfq_email_to_vendor(vendor.email, vendor.first_name, db_rfq.title)
+            send_rfq_email_to_vendor(vendor.email, vendor.first_name, db_rfq)
 
     return db_rfq

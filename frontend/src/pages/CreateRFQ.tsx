@@ -80,6 +80,13 @@ export function CreateRFQ() {
     });
   }, [id]);
 
+  // Auto-advance status if quotations exist
+  useEffect(() => {
+    if (quotationCount > 0 && formData.status !== 'Reviewed Quotations' && formData.status !== 'PO Created') {
+      setFormData(prev => ({ ...prev, status: 'Reviewed Quotations' }));
+    }
+  }, [quotationCount, formData.status]);
+
   const handleAddLine = () => {
     setLines([...lines, { product_id: '', quantity: 1, unit: 'NOS' }]);
   };
@@ -113,10 +120,8 @@ export function CreateRFQ() {
   };
 
   const effectiveStatus = (): string => {
-    // If quotations have been received and status is Sent to Vendor or beyond, show Reviewed Quotations
-    if (quotationCount > 0 && ['Sent to Vendor', 'Reviewed Quotations'].includes(formData.status)) {
-      return 'Reviewed Quotations';
-    }
+    if (formData.status === 'PO Created') return 'PO Created';
+    if (quotationCount > 0) return 'Reviewed Quotations';
     return formData.status;
   };
 
@@ -129,6 +134,9 @@ export function CreateRFQ() {
     }
     const payload = {
       ...formData,
+      category_id: formData.category_id || null,
+      deadline: formData.deadline || null,
+      description: formData.description || null,
       status: finalStatus,
       lines: lines.filter(l => l.product_id.trim() !== ''),
       vendor_ids: selectedVendors.map(v => v.id)
@@ -243,6 +251,31 @@ export function CreateRFQ() {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deadline*</label>
+              <input
+                type="date"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                value={formData.deadline ? formData.deadline.split('T')[0] : ''}
+                onChange={e => setFormData({...formData, deadline: e.target.value ? new Date(e.target.value).toISOString() : ''})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+              <select
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
+                value={formData.status}
+                onChange={e => setFormData({...formData, status: e.target.value})}
+              >
+                <option value="Draft">Draft</option>
+                <option value="Sent to Vendor">Sent to Vendor</option>
+                <option value="Reviewed Quotations">Reviewed Quotations</option>
+                <option value="PO Created">PO Created</option>
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GST Percentage</label>
               <input
                 type="number"
@@ -251,17 +284,6 @@ export function CreateRFQ() {
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
                 value={formData.gst_percentage}
                 onChange={e => setFormData({...formData, gst_percentage: parseFloat(e.target.value) || 0})}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deadline*</label>
-              <input
-                type="date"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-slate-900/50"
-                value={formData.deadline ? formData.deadline.split('T')[0] : ''}
-                onChange={e => setFormData({...formData, deadline: e.target.value ? new Date(e.target.value).toISOString() : ''})}
               />
             </div>
           </div>
@@ -378,32 +400,13 @@ export function CreateRFQ() {
           </div>
 
           <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 justify-end">
-            {formData.status === 'Draft' ? (
-              <>
-                <button 
-                  type="button"
-                  onClick={(e) => handleSubmit(e, 'Draft')}
-                  className="px-6 py-2.5 rounded-xl font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-900 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:bg-gray-800 transition-colors"
-                >
-                  Save as Draft
-                </button>
-                <button 
-                  type="button"
-                  onClick={(e) => handleSubmit(e, 'Sent to Vendor')}
-                  className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
-                >
-                  Save & Send to Vendors
-                </button>
-              </>
-            ) : (
-              <button 
-                type="button"
-                onClick={(e) => handleSubmit(e, formData.status)}
-                className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
-              >
-                Save Changes
-              </button>
-            )}
+            <button 
+              type="button"
+              onClick={(e) => handleSubmit(e, formData.status)}
+              className="px-6 py-2.5 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-[0.98]"
+            >
+              {isEditMode ? 'Save Changes' : 'Create RFQ'}
+            </button>
           </div>
         </div>
       </div>
