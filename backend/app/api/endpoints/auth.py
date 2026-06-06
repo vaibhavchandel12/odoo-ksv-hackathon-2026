@@ -60,6 +60,7 @@ def signup(user_in: UserPublicSignup, db: Session = Depends(deps.get_db)):
         password_hash=get_password_hash(user_in.password),
         role_id=role.id,
         is_active=True, # Active by default
+        gst_details=user_in.gst_details,
     )
     db.add(db_user)
     db.commit()

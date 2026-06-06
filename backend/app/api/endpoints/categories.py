@@ -4,7 +4,7 @@ from typing import List
 
 from backend.app.core.database import SessionLocal
 from backend.app.models.category import Category
-from backend.app.schemas.category import CategoryCreate, CategoryRead
+from backend.app.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 
 router = APIRouter()
 
@@ -34,3 +34,27 @@ def read_category(category_id: str, db: Session = Depends(get_db)):
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
     return category
+
+@router.put("/{category_id}", response_model=CategoryRead)
+def update_category(category_id: str, category_in: CategoryUpdate, db: Session = Depends(get_db)):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+        
+    update_data = category_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(category, field, value)
+        
+    db.commit()
+    db.refresh(category)
+    return category
+
+@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(category_id: str, db: Session = Depends(get_db)):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+        
+    db.delete(category)
+    db.commit()
+    return None

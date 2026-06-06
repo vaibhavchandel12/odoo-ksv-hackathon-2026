@@ -1,23 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { ProductCard } from '../components/ProductCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppLayout } from '../components/AppLayout';
 
 export function Products() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await api.get('/products');
-      if (response.data) {
-        setProducts(response.data);
+      try {
+        const response = await api.get('/products/');
+        if (response.data) {
+          setProducts(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProducts();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      const res = await api.delete(`/products/${id}`);
+      if (!res.error) {
+        setProducts(products.filter(p => p.id !== id));
+      } else {
+        alert(res.error);
+      }
+    }
+  };
 
   return (
     <AppLayout>
@@ -37,7 +54,12 @@ export function Products() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map(p => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard 
+                key={p.id} 
+                product={p} 
+                onEdit={(id) => navigate(`/products/edit/${id}`)}
+                onDelete={handleDelete}
+              />
             ))}
             {products.length === 0 && (
               <p className="text-gray-500 col-span-full text-center py-10">No products found.</p>

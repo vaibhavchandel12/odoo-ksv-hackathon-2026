@@ -65,6 +65,22 @@ export const Dashboard: React.FC = () => {
                 <Users className="h-4 w-4" />
                 <span>User Management</span>
               </a>
+              <a href="/vendors" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <Users className="h-4 w-4" />
+                <span>Vendors</span>
+              </a>
+              <a href="/rfqs" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <ClipboardList className="h-4 w-4" />
+                <span>Requests for Quotation</span>
+              </a>
+              <a href="/submitted-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <FileText className="h-4 w-4" />
+                <span>All Quotations</span>
+              </a>
+              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <ShoppingCart className="h-4 w-4" />
+                <span>Purchase Orders</span>
+              </a>
               <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <Settings className="h-4 w-4" />
                 <span>System Audits</span>
@@ -74,11 +90,15 @@ export const Dashboard: React.FC = () => {
 
           {user?.role?.name === 'Procurement Officer' && (
             <>
+              <a href="/vendors" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <Users className="h-4 w-4" />
+                <span>Vendors</span>
+              </a>
               <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <ClipboardList className="h-4 w-4" />
                 <span>Requests for Quotation</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/submitted-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <FileText className="h-4 w-4" />
                 <span>Submitted Quotations</span>
               </a>
@@ -108,9 +128,9 @@ export const Dashboard: React.FC = () => {
                 <ClipboardList className="h-4 w-4" />
                 <span>Active RFQs</span>
               </a>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/vendor-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <Send className="h-4 w-4" />
-                <span>Submit Quotation</span>
+                <span>My Quotations</span>
               </a>
             </>
           )}

@@ -8,12 +8,13 @@ interface ProductCardProps {
     cost: number;
     on_hand_qty: number;
     category_id?: string;
+    category_id?: string;
   };
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const [imgError, setImgError] = React.useState(false);
-
+export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
       {product.image_url && !imgError ? (
@@ -33,6 +34,26 @@ export function ProductCard({ product }: ProductCardProps) {
         <span className="font-medium text-emerald-600">${product.cost.toFixed(2)}</span>
         <span>Qty: {product.on_hand_qty}</span>
       </div>
+      {(onEdit || onDelete) && (
+        <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
+          {onEdit && (
+            <button 
+              onClick={() => onEdit(product.id)}
+              className="flex-1 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+            >
+              Edit
+            </button>
+          )}
+          {onDelete && (
+            <button 
+              onClick={() => onDelete(product.id)}
+              className="flex-1 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100"
+            >
+              Delete
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -17,7 +17,8 @@ export function UserManagement() {
     phone: '',
     role_id: '',
     password: '',
-    is_active: true
+    is_active: true,
+    gst_details: ''
   });
 
   // Edit Modal State
@@ -35,8 +36,8 @@ export function UserManagement() {
   const fetchData = async () => {
     setLoading(true);
     const [usersRes, rolesRes] = await Promise.all([
-      api.get('/users'),
-      api.get('/roles')
+      api.get('/users/'),
+      api.get('/roles/')
     ]);
     if (usersRes.data) setUsers(usersRes.data);
     if (rolesRes.data) setRoles(rolesRes.data);
@@ -45,7 +46,10 @@ export function UserManagement() {
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await api.post('/users', addForm);
+    const payload: any = { ...addForm };
+    if (!payload.phone) delete payload.phone;
+    
+    const res = await api.post('/users/', payload);
     if (!res.error) {
       setIsAddingUser(false);
       setAddForm({
@@ -55,11 +59,12 @@ export function UserManagement() {
         phone: '',
         role_id: '',
         password: '',
-        is_active: true
+        is_active: true,
+        gst_details: ''
       });
       fetchData(); // Refresh list
     } else {
-      alert("Failed to add user: " + res.error);
+      alert("Failed to add user: " + (typeof res.error === 'object' ? JSON.stringify(res.error) : res.error));
     }
   };
 
@@ -92,7 +97,7 @@ export function UserManagement() {
       setEditingUser(null);
       fetchData(); // Refresh list
     } else {
-      alert("Failed to update user: " + res.error);
+      alert("Failed to update user: " + (typeof res.error === 'object' ? JSON.stringify(res.error) : res.error));
     }
   };
 
@@ -228,6 +233,17 @@ export function UserManagement() {
                       type="tel"
                       value={addForm.phone}
                       onChange={(e) => setAddForm({...addForm, phone: e.target.value})}
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#2563EB] outline-none text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">GST Details</label>
+                    <input 
+                      type="text"
+                      value={addForm.gst_details}
+                      onChange={(e) => setAddForm({...addForm, gst_details: e.target.value})}
+                      placeholder="Optional"
                       className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-[#2563EB] outline-none text-sm"
                     />
                   </div>

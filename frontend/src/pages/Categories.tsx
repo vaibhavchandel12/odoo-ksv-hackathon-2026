@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { CategoryCard } from '../components/CategoryCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppLayout } from '../components/AppLayout';
 
 export function Categories() {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await api.get('/categories');
+      const response = await api.get('/categories/');
       if (response.data) {
         setCategories(response.data);
       }
@@ -22,6 +23,17 @@ export function Categories() {
   const getParentName = (parentId: string) => {
     const parent = categories.find(c => c.id === parentId);
     return parent ? parent.name : parentId;
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this category?')) {
+      const res = await api.delete(`/categories/${id}`);
+      if (!res.error) {
+        setCategories(categories.filter(c => c.id !== id));
+      } else {
+        alert(res.error);
+      }
+    }
   };
 
   return (
@@ -46,6 +58,8 @@ export function Categories() {
                 key={c.id} 
                 category={c} 
                 parentName={c.parent_id ? getParentName(c.parent_id) : undefined}
+                onEdit={(id) => navigate(`/categories/edit/${id}`)}
+                onDelete={handleDelete}
               />
             ))}
             {categories.length === 0 && (

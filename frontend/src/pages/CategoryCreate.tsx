@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { AppLayout } from '../components/AppLayout';
 
 export function CategoryCreate() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = !!id;
+
   const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -12,18 +15,37 @@ export function CategoryCreate() {
   });
 
   useEffect(() => {
-    api.get('/categories').then(res => {
+    api.get('/categories/').then(res => {
       if (res.data) setCategories(res.data);
     });
-  }, []);
+
+    if (id) {
+      api.get(`/categories/${id}`).then(res => {
+        if (res.data) {
+          const c = res.data;
+          setFormData({
+            name: c.name || '',
+            parent_id: c.parent_id || '',
+          });
+        }
+      });
+    }
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
-      name: formData.name,
+      ...formData,
       parent_id: formData.parent_id || null
     };
-    const res = await api.post('/categories', data);
+
+    let res;
+    if (isEditMode) {
+      res = await api.put(`/categories/${id}`, data);
+    } else {
+      res = await api.post('/categories/', data);
+    }
+    
     if (!res.error) {
       navigate('/categories');
     } else {
@@ -34,7 +56,7 @@ export function CategoryCreate() {
   return (
     <AppLayout showBack={true}>
       <div className="max-w-2xl mx-auto p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Add New Category</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">{isEditMode ? 'Edit Category' : 'Add New Category'}</h1>
         <form onSubmit={handleSubmit} className="bg-white/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl space-y-6 border border-white/50">
           
           <div>
@@ -66,7 +88,7 @@ export function CategoryCreate() {
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] cursor-pointer"
           >
-            Create Category
+            {isEditMode ? 'Update Category' : 'Create Category'}
           </button>
         </form>
       </div>

@@ -11,6 +11,13 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    image_url: Optional[str] = None
+    category_id: Optional[str] = None
+    cost: Optional[float] = None
+    on_hand_qty: Optional[int] = None
+
 class ProductRead(ProductBase):
     id: str
     

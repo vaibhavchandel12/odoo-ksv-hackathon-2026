@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { AppLayout } from '../components/AppLayout';
 
 export function ProductCreate() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = !!id;
+
   const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -15,18 +18,35 @@ export function ProductCreate() {
   });
 
   useEffect(() => {
-    api.get('/categories').then(res => {
+    api.get('/categories/').then(res => {
       if (res.data) setCategories(res.data);
     });
-  }, []);
+
+    if (id) {
+      api.get(`/products/${id}`).then(res => {
+        if (res.data) {
+          const p = res.data;
+          setFormData({
+            name: p.name || '',
+            image_url: p.image_url || '',
+            category_id: p.category_id || '',
+            cost: p.cost || 0,
+            on_hand_qty: p.on_hand_qty || 0,
+          });
+        }
+      });
+    }
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {
-      ...formData,
-      category_id: formData.category_id === '' ? null : formData.category_id
-    };
-    const res = await api.post('/products/', payload);
+    let res;
+    if (isEditMode) {
+      res = await api.put(`/products/${id}`, formData);
+    } else {
+      res = await api.post('/products/', formData);
+    }
+    
     if (!res.error) {
       navigate('/products');
     } else {
@@ -37,7 +57,7 @@ export function ProductCreate() {
   return (
     <AppLayout showBack={true}>
       <div className="max-w-2xl mx-auto p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Add New Product</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">{isEditMode ? 'Edit Product' : 'Add New Product'}</h1>
         <form onSubmit={handleSubmit} className="bg-white/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl space-y-6 border border-white/50">
           
           <div>
@@ -55,10 +75,23 @@ export function ProductCreate() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
             <input
               type="url"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white/50 mb-3"
               value={formData.image_url}
               onChange={e => setFormData({...formData, image_url: e.target.value})}
+              placeholder="https://example.com/image.jpg"
             />
+            {formData.image_url && (
+              <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 bg-white/50 flex justify-center p-2">
+                <img 
+                  src={formData.image_url} 
+                  alt="Product preview" 
+                  className="max-h-48 object-contain rounded-md"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL';
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-6">
@@ -103,7 +136,7 @@ export function ProductCreate() {
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] cursor-pointer"
           >
-            Create Product
+            {isEditMode ? 'Update Product' : 'Create Product'}
           </button>
         </form>
       </div>

@@ -42,5 +42,6 @@ INSERT INTO roles (name, description) VALUES
 ('Admin', 'Administrator with full system control and access to all settings, configurations, and user management.'),
 ('Procurement Officer', 'Procurement staff member responsible for creating and managing RFQs, purchase orders, quotations, and invoices.'),
 ('Manager', 'Management persona responsible for reviewing and approving procurements, RFQs, purchase orders, and viewing dashboard reports.'),
+('Financer', 'Finance manager responsible for final approval of quotations and overseeing financial limits.'),
 ('Vendor', 'Vendor representative with access to the Vendor Portal to view RFQs and submit quotations.')
 ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description;

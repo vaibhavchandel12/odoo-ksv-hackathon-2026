@@ -14,6 +14,7 @@ const signupSchema = z.object({
   last_name: z.string().min(2, 'Last name must be at least 2 characters'),
   email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
   phone: z.string().min(6, 'Please enter a valid contact phone number'),
+  gst_details: z.string().optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Confirm password is required'),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -55,6 +56,7 @@ export const Signup: React.FC = () => {
       last_name: '',
       email: '',
       phone: '',
+      gst_details: '',
       password: '',
       confirmPassword: '',
     },
@@ -267,6 +269,23 @@ export const Signup: React.FC = () => {
                   />
                   {errors.phone && (
                     <p className="text-xs font-medium text-red-600">{errors.phone.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="gst_details" className="text-xs font-semibold text-slate-700 uppercase">
+                    GST Number / Details (Optional)
+                  </label>
+                  <input
+                    id="gst_details"
+                    type="text"
+                    placeholder="e.g. 22AAAAA0000A1Z5"
+                    className={`block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none ${
+                      errors.gst_details ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
+                    }`}
+                    {...register('gst_details')}
+                  />
+                  {errors.gst_details && (
+                    <p className="text-xs font-medium text-red-600">{errors.gst_details.message}</p>
                   )}
                 </div>
               </div>

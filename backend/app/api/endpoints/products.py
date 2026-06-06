@@ -4,7 +4,7 @@ from typing import List
 
 from backend.app.core.database import SessionLocal
 from backend.app.models.product import Product
-from backend.app.schemas.product import ProductCreate, ProductRead
+from backend.app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 
 router = APIRouter()
 
@@ -34,3 +34,27 @@ def read_product(product_id: str, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+@router.put("/{product_id}", response_model=ProductRead)
+def update_product(product_id: str, product_in: ProductUpdate, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    update_data = product_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(product, field, value)
+        
+    db.commit()
+    db.refresh(product)
+    return product
+
+@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_product(product_id: str, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    db.delete(product)
+    db.commit()
+    return None

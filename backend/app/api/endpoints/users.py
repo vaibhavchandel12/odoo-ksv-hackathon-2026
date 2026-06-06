@@ -18,9 +18,9 @@ def read_user_me(current_user: User = Depends(deps.get_current_user)):
 @router.get("/", response_model=List[UserListResponse])
 def read_all_users(
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.RoleChecker(["Admin"]))
+    current_user: User = Depends(deps.RoleChecker(["Admin", "Procurement Officer", "Manager"]))
 ):
-    """Admin-only: fetch all users with their roles."""
+    """Fetch all users with their roles."""
     users = db.query(User).all()
     # We need to map role_name for UserListResponse. 
     # Luckily, the User model has a relationship to Role
@@ -35,6 +35,7 @@ def read_all_users(
             "role_name": user.role.name if user.role else "Unknown",
             "is_active": user.is_active,
             "last_login": user.last_login,
+            "gst_details": user.gst_details,
             "created_at": user.created_at
         })
     return result
@@ -62,6 +63,7 @@ def create_user(
         password_hash=get_password_hash(user_in.password),
         role_id=user_in.role_id,
         is_active=user_in.is_active,
+        gst_details=user_in.gst_details,
     )
     db.add(db_user)
     db.commit()

@@ -8,6 +8,10 @@ class CategoryBase(BaseModel):
 class CategoryCreate(CategoryBase):
     pass
 
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    parent_id: Optional[str] = None
+
 class CategoryRead(CategoryBase):
     id: str
     
