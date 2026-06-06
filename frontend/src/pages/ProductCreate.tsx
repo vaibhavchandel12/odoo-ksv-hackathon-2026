@@ -22,7 +22,11 @@ export function ProductCreate() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await api.post('/products', formData);
+    const payload = {
+      ...formData,
+      category_id: formData.category_id === '' ? null : formData.category_id
+    };
+    const res = await api.post('/products/', payload);
     if (!res.error) {
       navigate('/products');
     } else {
