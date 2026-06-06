@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { AppLayout } from '../components/AppLayout';
-import { Clock, CheckCircle, XCircle, ChevronDown, ChevronUp, Filter, X, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { Clock, CheckCircle, XCircle, ChevronDown, ChevronUp, Filter, X, Search, ArrowUpDown, ArrowUp, ArrowDown, ClipboardCheck } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTableFilterSort } from '../hooks/useTableFilterSort';
 
 export function SubmittedQuotations() {
@@ -12,9 +12,10 @@ export function SubmittedQuotations() {
   const [allQuotations, setAllQuotations] = useState<any[]>([]);
   const [quotations, setQuotations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showComparison, setShowComparison] = useState(false);
+  const navigate = useNavigate();
 
   const { searchTerm, setSearchTerm, sortConfig, requestSort, processedData } = useTableFilterSort(
     quotations, 
@@ -53,6 +54,8 @@ export function SubmittedQuotations() {
     switch (status) {
       case 'Approved':
         return <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-100"><CheckCircle className="h-3 w-3" /> Approved</span>;
+      case 'L1 Approved':
+        return <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-100"><CheckCircle className="h-3 w-3" /> L1 Approved</span>;
       case 'Rejected':
         return <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700 border border-red-100"><XCircle className="h-3 w-3" /> Rejected</span>;
       default:
@@ -61,7 +64,13 @@ export function SubmittedQuotations() {
   };
 
   const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
+    const newExpanded = new Set(expandedIds);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedIds(newExpanded);
   };
 
   const toggleSelect = (id: string) => {
@@ -145,13 +154,14 @@ export function SubmittedQuotations() {
                   <th className="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:bg-slate-800 transition-colors" onClick={() => requestSort('status')}>
                     <div className="flex items-center gap-1">Status {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />) : <ArrowUpDown className="h-3 w-3 opacity-50" />}</div>
                   </th>
+                  <th className="px-6 py-4 text-center">Approvers</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {processedData.map(q => {
                   const totalValue = q.lines.reduce((sum: number, line: any) => sum + (line.price * line.quantity), 0);
-                  const isExpanded = expandedId === q.id;
+                  const isExpanded = expandedIds.has(q.id);
 
                   return (
                     <React.Fragment key={q.id}>
@@ -170,34 +180,28 @@ export function SubmittedQuotations() {
                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{q.rfq_title}</td>
                         <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{q.vendor_name}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{q.lines.length} items</td>
-                        <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{totalValue.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                         <td className="px-6 py-4">{getStatusBadge(q.status)}</td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex flex-col gap-1 items-center justify-center">
+                            {q.manager_name ? <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">M: {q.manager_name.split(' ')[0]}</span> : null}
+                            {q.financer_name ? <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">F: {q.financer_name.split(' ')[0]}</span> : null}
+                            {!q.manager_name && !q.financer_name && <span className="text-xs text-slate-400">—</span>}
+                          </div>
+                        </td>
                         <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                          {q.status === 'Pending' && (
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => updateStatus(q.id, 'Approved')}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-1.5 text-xs font-semibold transition-colors"
-                              >
-                                Approve
-                              </button>
-                              <button 
-                                onClick={() => updateStatus(q.id, 'Rejected')}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1.5 text-xs font-semibold transition-colors"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                          {q.status === 'Approved' && !q.has_po && (
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => updateStatus(q.id, 'Rejected')}
-                                className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold transition-colors"
-                              >
-                                Reject
-                              </button>
-                              <button 
+                          <div className="flex items-center justify-end gap-2">
+                            {/* View Approval link always visible */}
+                            <button
+                              onClick={() => navigate(`/approvals/${q.id}`)}
+                              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-700 px-3 py-1.5 text-xs font-semibold transition-colors"
+                            >
+                              <ClipboardCheck className="h-3 w-3" />
+                              {q.status === 'Pending' ? 'View Approval' : 'Approval Detail'}
+                            </button>
+                            {/* Only show Create PO if fully approved by both */}
+                            {q.status === 'Approved' && !q.has_po && (
+                              <button
                                 onClick={async () => {
                                   const res = await api.post('/purchase-orders/', { quotation_id: q.id });
                                   if (!res.error) {
@@ -208,22 +212,20 @@ export function SubmittedQuotations() {
                                 }}
                                 className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 px-3 py-1.5 text-xs font-semibold transition-colors shadow-sm"
                               >
-                                Create Purchase Order
+                                Create PO
                               </button>
-                            </div>
-                          )}
-                          {q.status === 'Approved' && q.has_po && (
-                            <div className="flex items-center justify-end">
+                            )}
+                            {q.status === 'Approved' && q.has_po && (
                               <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-100">
                                 PO Created
                               </span>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </td>
                       </tr>
                       {isExpanded && (
                         <tr>
-                          <td colSpan={8} className="px-0 py-0 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                          <td colSpan={9} className="px-0 py-0 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                             <div className="px-14 py-4">
                               <h4 className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-3">Line Items</h4>
                               <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -244,8 +246,8 @@ export function SubmittedQuotations() {
                                         <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{line.product_name}</td>
                                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.vendor_code}</td>
                                         <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{line.quantity}</td>
-                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">₹{line.price.toFixed(2)}</td>
-                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">₹{(line.price * line.quantity).toFixed(2)}</td>
+                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">₹{line.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">₹{(line.price * line.quantity).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.lead_time_days ? `${line.lead_time_days} days` : '-'}</td>
                                       </tr>
                                     ))}
@@ -261,7 +263,7 @@ export function SubmittedQuotations() {
                 })}
                 {processedData.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No quotations found.</td>
+                    <td colSpan={9} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No quotations found.</td>
                   </tr>
                 )}
               </tbody>
@@ -291,7 +293,7 @@ export function SubmittedQuotations() {
                         <div className="flex-1 space-y-4">
                           <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
                             <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Value</span>
-                            <span className="text-xl font-display font-bold text-indigo-600">₹{totalValue.toFixed(2)}</span>
+                            <span className="text-xl font-display font-bold text-indigo-600">₹{totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                           </div>
                           
                           <div>
@@ -301,8 +303,8 @@ export function SubmittedQuotations() {
                                 <div key={line.id} className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 p-2 rounded text-sm">
                                   <div className="font-semibold text-slate-800 dark:text-slate-200">{line.product_name}</div>
                                   <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    <span>{line.quantity} units @ ₹{line.price.toFixed(2)}</span>
-                                    <span className="font-medium">₹{(line.quantity * line.price).toFixed(2)}</span>
+                                    <span>{line.quantity} units @ ₹{line.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                    <span className="font-medium">₹{(line.quantity * line.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                   </div>
                                   {line.lead_time_days && (
                                     <div className="text-xs text-emerald-600 mt-1">Lead time: {line.lead_time_days} days</div>
@@ -314,14 +316,15 @@ export function SubmittedQuotations() {
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-2">
-                          <button 
+                          <button
                             onClick={() => {
-                              updateStatus(q.id, 'Approved');
                               setShowComparison(false);
+                              navigate(`/approvals/${q.id}`);
                             }}
-                            className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+                            className="flex-1 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5"
                           >
-                            Approve Winner
+                            <ClipboardCheck className="h-3.5 w-3.5" />
+                            View Approval
                           </button>
                         </div>
                       </div>

@@ -10,6 +10,7 @@ from backend.app.models.quotation import Quotation, QuotationLine
 from backend.app.models.purchase_order import PurchaseOrder, PurchaseOrderLine
 from backend.app.schemas.purchase_order import PurchaseOrderCreate, PurchaseOrderResponse, PurchaseOrderLineResponse
 from backend.app.core.audit import log_audit
+from backend.app.core.email import send_invoice_email_to_vendor
 
 router = APIRouter()
 
@@ -184,6 +185,32 @@ def mark_po_as_paid(
     
     return _format_po_response(po_full, db)
 
+
+@router.post("/{po_id}/send-email", response_model=dict)
+def send_po_email(
+    po_id: str,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.RoleChecker(["Admin", "Manager", "Procurement Officer", "Financer"]))
+):
+    try:
+        po_uuid = uuid.UUID(po_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid PO ID")
+
+    po = db.query(PurchaseOrder).options(joinedload(PurchaseOrder.vendor)).filter(PurchaseOrder.id == po_uuid).first()
+    if not po:
+        raise HTTPException(status_code=404, detail="Purchase Order not found")
+        
+    if not po.vendor:
+        raise HTTPException(status_code=400, detail="No vendor associated with this PO")
+
+    # Send the email
+    vendor_name = f"{po.vendor.first_name} {po.vendor.last_name}"
+    send_invoice_email_to_vendor(po.vendor.email, vendor_name, po.po_number, po.grand_total)
+    
+    log_audit(db, current_user.id, "EMAIL", "PurchaseOrder", str(po.id), f"Sent Invoice Email for PO: {po.po_number} to {po.vendor.email}")
+    
+    return {"message": f"Invoice email sent to {po.vendor.email}"}
 
 def _format_po_response(po: PurchaseOrder, db: Session) -> PurchaseOrderResponse:
     lines_resp = []

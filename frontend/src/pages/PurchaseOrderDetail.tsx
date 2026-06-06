@@ -114,8 +114,8 @@ export function PurchaseOrderDetail() {
                 <tr key={line.id} className="text-sm">
                   <td className="px-8 py-5 font-medium text-slate-800 dark:text-slate-200">{line.product_name}</td>
                   <td className="px-8 py-5 text-center text-slate-600 dark:text-slate-400">{line.quantity}</td>
-                  <td className="px-8 py-5 text-right text-slate-600 dark:text-slate-400">₹{line.unit_price.toFixed(2)}</td>
-                  <td className="px-8 py-5 text-right font-semibold text-slate-800 dark:text-slate-200">₹{line.total_price.toFixed(2)}</td>
+                  <td className="px-8 py-5 text-right text-slate-600 dark:text-slate-400">₹{line.unit_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                  <td className="px-8 py-5 text-right font-semibold text-slate-800 dark:text-slate-200">₹{line.total_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
               ))}
             </tbody>
@@ -126,19 +126,19 @@ export function PurchaseOrderDetail() {
             <div className="w-full max-w-sm">
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>Subtotal</span>
-                <span className="font-semibold">₹{po.subtotal.toFixed(2)}</span>
+                <span className="font-semibold">₹{po.subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>CGST (9%)</span>
-                <span>₹{po.cgst.toFixed(2)}</span>
+                <span>₹{po.cgst.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>SGST (9%)</span>
-                <span>₹{po.sgst.toFixed(2)}</span>
+                <span>₹{po.sgst.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-4 text-lg font-bold text-slate-900 dark:text-white">
                 <span>Grand total</span>
-                <span>₹{po.grand_total.toFixed(2)}</span>
+                <span>₹{po.grand_total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
             </div>
           </div>

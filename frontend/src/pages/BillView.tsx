@@ -36,6 +36,15 @@ export function BillView() {
     window.print();
   };
 
+  const handleSendEmail = async () => {
+    const res = await api.post(`/purchase-orders/${id}/send-email`, {});
+    if (!res.error) {
+      alert("Invoice email sent successfully!");
+    } else {
+      alert("Failed to send email: " + res.error);
+    }
+  };
+
   if (loading) {
     return (
       <AppLayout>
@@ -72,6 +81,12 @@ export function BillView() {
             >
               Back to Bills
             </Link>
+            <button 
+              onClick={handleSendEmail}
+              className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 text-sm font-semibold rounded-lg shadow-sm transition-colors"
+            >
+              <Mail className="h-4 w-4" /> Email Invoice
+            </button>
             <button 
               onClick={handleDownloadPDF}
               className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-lg shadow-sm transition-colors"
@@ -134,8 +149,8 @@ export function BillView() {
                 <tr key={line.id} className="text-sm">
                   <td className="px-8 py-5 font-medium text-slate-800 dark:text-slate-200">{line.product_name}</td>
                   <td className="px-8 py-5 text-center text-slate-600 dark:text-slate-400">{line.quantity}</td>
-                  <td className="px-8 py-5 text-right text-slate-600 dark:text-slate-400">₹{line.unit_price.toFixed(2)}</td>
-                  <td className="px-8 py-5 text-right font-semibold text-slate-800 dark:text-slate-200">₹{line.total_price.toFixed(2)}</td>
+                  <td className="px-8 py-5 text-right text-slate-600 dark:text-slate-400">₹{line.unit_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                  <td className="px-8 py-5 text-right font-semibold text-slate-800 dark:text-slate-200">₹{line.total_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
               ))}
             </tbody>
@@ -146,19 +161,19 @@ export function BillView() {
             <div className="w-full max-w-sm">
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>Subtotal</span>
-                <span className="font-semibold">₹{po.subtotal.toFixed(2)}</span>
+                <span className="font-semibold">₹{po.subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>CGST (9%)</span>
-                <span>₹{po.cgst.toFixed(2)}</span>
+                <span>₹{po.cgst.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-2 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                 <span>SGST (9%)</span>
-                <span>₹{po.sgst.toFixed(2)}</span>
+                <span>₹{po.sgst.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
               <div className="flex justify-between py-4 text-lg font-bold text-slate-900 dark:text-white">
                 <span>Grand total</span>
-                <span>₹{po.grand_total.toFixed(2)}</span>
+                <span>₹{po.grand_total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
               </div>
             </div>
           </div>

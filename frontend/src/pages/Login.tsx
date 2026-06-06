@@ -76,12 +76,7 @@ export const Login: React.FC = () => {
         <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-[600px] h-[600px] rounded-full bg-indigo-500/10 blur-[130px]"></div>
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#2563EB] shadow-lg shadow-blue-500/30">
-            <Shield className="h-6 w-6 text-white" />
-          </div>
-          <span className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            VendorBridge
-          </span>
+          <img src="/logo.jpg" alt="VendorBridge Logo" className="h-12 w-auto object-contain rounded-lg shadow-lg" />
         </div>
 
         <div className="relative z-10 my-auto flex flex-col items-center">
@@ -114,10 +109,7 @@ export const Login: React.FC = () => {
           <div className="flex flex-col space-y-2 text-center lg:text-left">
             {/* Small screen logo */}
             <div className="flex items-center gap-2 lg:hidden justify-center mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#2563EB] text-white">
-                <Shield className="h-5 w-5" />
-              </div>
-              <span className="font-display text-xl font-bold text-slate-900 dark:text-white">VendorBridge</span>
+              <img src="/logo.jpg" alt="VendorBridge" className="h-10 w-auto rounded-md shadow-md" />
             </div>
             
             <h1 className="font-display text-3xl font-bold tracking-tight text-slate-900 dark:text-white">

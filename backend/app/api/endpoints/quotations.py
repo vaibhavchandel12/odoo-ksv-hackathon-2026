@@ -121,7 +121,9 @@ def get_quotations(
     
     if current_user.role.name == "Vendor":
         query = query.filter(Quotation.vendor_id == current_user.id)
-    elif current_user.role.name not in ["Admin", "Procurement Officer", "Manager"]:
+    elif current_user.role.name in ["Manager", "Financer"]:
+        query = query.filter(Quotation.status != "Pending", Quotation.status != "Submitted")
+    elif current_user.role.name not in ["Admin", "Procurement Officer"]:
         raise HTTPException(status_code=403, detail="Not enough permissions")
         
     quotations = query.all()
@@ -194,6 +196,13 @@ def update_quotation_status(
         
     role = current_user.role.name
     
+    # Allow Admin or Procurement Officer to assign approvers
+    if update_data.assigned_manager_id and role in ["Admin", "Procurement Officer"]:
+        quotation.manager_id = update_data.assigned_manager_id
+
+    if update_data.assigned_financer_id and role in ["Admin", "Procurement Officer"]:
+        quotation.financer_id = update_data.assigned_financer_id
+    
     if update_data.manager_status and role == "Manager":
         if update_data.manager_status not in ["Awaiting", "Approved", "Rejected"]:
             raise HTTPException(status_code=400, detail="Invalid manager status")
@@ -222,7 +231,7 @@ def update_quotation_status(
     
     # Allow Procurement/Admin to override overall status directly
     if update_data.status and role in ["Admin", "Procurement Officer"]:
-        if update_data.status not in ["Pending", "Approved", "Rejected"]:
+        if update_data.status not in ["Pending", "Submitted", "L1 Approved", "Approved", "Rejected"]:
             raise HTTPException(status_code=400, detail="Invalid status")
         quotation.status = update_data.status
 

@@ -18,6 +18,8 @@ export const getDashboardRedirect = (roleName: string): string => {
       return '/dashboard/manager';
     case 'Vendor':
       return '/dashboard/vendor';
+    case 'Financer':
+      return '/dashboard/financer';
     default:
       return '/login';
   }

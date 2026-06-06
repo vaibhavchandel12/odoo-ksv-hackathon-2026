@@ -35,6 +35,8 @@ class QuotationUpdate(BaseModel):
     financer_status: str | None = None
     manager_remarks: str | None = None
     financer_remarks: str | None = None
+    assigned_manager_id: uuid.UUID | None = None
+    assigned_financer_id: uuid.UUID | None = None
 
 class QuotationResponse(BaseModel):
     id: uuid.UUID

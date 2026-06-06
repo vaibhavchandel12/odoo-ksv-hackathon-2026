@@ -89,7 +89,7 @@ export function PurchaseOrdersList() {
                       <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{po.po_number}</td>
                       <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{po.vendor_name}</td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(po.po_date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{po.grand_total.toFixed(2)}</td>
+                      <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{po.grand_total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                       <td className="px-6 py-4">
                         {po.status === 'Paid' ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800">

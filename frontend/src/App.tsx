@@ -21,6 +21,9 @@ import { PurchaseOrderDetail } from './pages/PurchaseOrderDetail';
 import { PurchaseOrdersList } from './pages/PurchaseOrdersList';
 import { BillView } from './pages/BillView';
 import { SystemAudits } from './pages/SystemAudits';
+import { Reports } from './pages/Reports';
+import { ApprovalsList } from './pages/ApprovalsList';
+import { ApprovalWorkflow } from './pages/ApprovalWorkflow';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -36,10 +39,10 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Product & Category Routes (Protected) */}
-          <Route path="/products" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><Products /></ProtectedRoute>} />
+          <Route path="/products" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer', 'Financer']}><Products /></ProtectedRoute>} />
           <Route path="/products/create" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><ProductCreate /></ProtectedRoute>} />
           <Route path="/products/edit/:id" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><ProductCreate /></ProtectedRoute>} />
-          <Route path="/categories" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><Categories /></ProtectedRoute>} />
+          <Route path="/categories" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer', 'Financer']}><Categories /></ProtectedRoute>} />
           <Route path="/categories/create" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><CategoryCreate /></ProtectedRoute>} />
           <Route path="/categories/edit/:id" element={<ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}><CategoryCreate /></ProtectedRoute>} />
 
@@ -118,10 +121,28 @@ function App() {
             } 
           />
 
+          <Route
+            path="/approvals"
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Financer', 'Procurement Officer']}>
+                <ApprovalsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/approvals/:id"
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Financer', 'Procurement Officer']}>
+                <ApprovalWorkflow />
+              </ProtectedRoute>
+            }
+          />
+
           <Route 
             path="/purchase-orders/:id" 
             element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}>
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer', 'Financer']}>
                 <PurchaseOrderDetail />
               </ProtectedRoute>
             } 
@@ -130,7 +151,7 @@ function App() {
           <Route 
             path="/purchase-orders" 
             element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer']}>
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Procurement Officer', 'Financer']}>
                 <PurchaseOrdersList />
               </ProtectedRoute>
             } 
@@ -159,6 +180,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['Admin']}>
                 <SystemAudits />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/reports" 
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Financer']}>
+                <Reports />
               </ProtectedRoute>
             } 
           />

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+import uuid
 
 from backend.app.api import deps
 from backend.app.models.user import User
@@ -76,7 +77,7 @@ def create_user(
 
 @router.patch("/{user_id}", response_model=UserResponse)
 def update_user(
-    user_id: str,
+    user_id: uuid.UUID,
     user_in: UserUpdate,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.RoleChecker(["Admin"]))

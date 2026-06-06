@@ -114,12 +114,7 @@ export const Signup: React.FC = () => {
       {/* Top Header */}
       <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 md:px-12 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563EB]">
-            <Shield className="h-5.5 w-5.5 text-white" />
-          </div>
-          <span className="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-            VendorBridge
-          </span>
+          <img src="/logo.jpg" alt="VendorBridge Logo" className="h-10 w-auto rounded object-contain" />
         </div>
         <div className="text-sm text-slate-500 dark:text-slate-400">
           Already have an account?{' '}

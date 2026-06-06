@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
 import { 
   Shield, LogOut, Users, Database, 
   Cpu, FileText, ClipboardList, TrendingUp, CheckCircle, FilePlus, 
   ShoppingCart, DollarSign, Award, Send, LayoutDashboard, Settings, ArrowLeft,
-  Moon, Sun
+  Moon, Sun, Bell, ClipboardCheck
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -18,16 +19,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, showBack }) => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      api.get('/audits/notifications').then((res) => {
+        if (res.data) setNotifications(res.data);
+      });
+    }
+  }, [user]);
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] dark:bg-slate-950 transition-colors">
+    <div className="flex h-screen print:h-auto bg-[#F8FAFC] dark:bg-slate-950 transition-colors print:block">
       {/* Sidebar */}
       <aside className="hidden md:flex w-64 flex-col bg-[#0F172A] text-white print:hidden">
         <div className="flex h-16 items-center gap-3 border-b border-slate-800 px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563EB] shadow-lg shadow-blue-500/20">
-            <Shield className="h-5.5 w-5.5 text-white" />
-          </div>
-          <span className="font-display font-bold tracking-tight text-lg">VendorBridge</span>
+          <img src="/logo.jpg" alt="VendorBridge Logo" className="h-10 w-auto rounded object-contain" />
         </div>
         
         {/* Navigation links based on role */}
@@ -36,92 +44,85 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, showBack }) => {
             ERP Workspace
           </div>
           
-          <a href={user?.role ? `/dashboard/${user.role.name.toLowerCase().replace(' ', '')}` : '/'} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-            <LayoutDashboard className="h-4 w-4 text-[#2563EB]" />
-            <span>Dashboard</span>
-          </a>
-
-          {user?.role?.name !== 'Vendor' && (
-            <>
-              <a href="/products" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <ShoppingCart className="h-4 w-4" />
-                <span>Products</span>
-              </a>
-              
-              <a href="/categories" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <Database className="h-4 w-4" />
-                <span>Categories</span>
-              </a>
-            </>
-          )}
-
-          {user?.role?.name === 'Admin' && (
-            <>
-              <a href="/users" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <Users className="h-4 w-4" />
-                <span>User Management</span>
-              </a>
-              <a href="/vendors" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <Users className="h-4 w-4" />
-                <span>Vendors</span>
-              </a>
-              <a href="/rfqs" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <ClipboardList className="h-4 w-4" />
-                <span>Requests for Quotation</span>
-              </a>
-              <a href="/submitted-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <FileText className="h-4 w-4" />
-                <span>All Quotations</span>
-              </a>
-              <a href="/purchase-orders" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <ShoppingCart className="h-4 w-4" />
-                <span>Purchase Orders</span>
-              </a>
-              <a href="/system-audits" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <Settings className="h-4 w-4" />
-                <span>System Audits</span>
-              </a>
-            </>
-          )}
-
-          {(user?.role?.name === 'Admin' || user?.role?.name === 'Financer') && (
-            <>
-              <a href="/bills" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <FileText className="h-4 w-4" />
-                <span>Vendor Bills</span>
-              </a>
-            </>
-          )}
-
-          {user?.role?.name === 'Procurement Officer' && (
-            <>
-              <a href="/vendors" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <Users className="h-4 w-4" />
-                <span>Vendors</span>
-              </a>
-              <a href="/rfqs" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <ClipboardList className="h-4 w-4" />
-                <span>Requests for Quotation</span>
-              </a>
-              <a href="/submitted-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <FileText className="h-4 w-4" />
-                <span>Submitted Quotations</span>
-              </a>
-              <a href="/purchase-orders" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <ShoppingCart className="h-4 w-4" />
-                <span>Purchase Orders</span>
-              </a>
-            </>
-          )}
-          
-          {user?.role?.name === 'Vendor' && (
-            <>
-              <a href="/vendor-quotations" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <FileText className="h-4 w-4" />
-                <span>My Quotations</span>
-              </a>
-            </>
-          )}
+          {[
+            {
+              name: 'Dashboard',
+              icon: LayoutDashboard,
+              path: user?.role ? `/dashboard/${user.role.name.toLowerCase().replace(' ', '')}` : '/',
+              show: true,
+            },
+            {
+              name: 'Product',
+              icon: ShoppingCart,
+              path: '/products',
+              show: ['Admin', 'Manager', 'Procurement Officer', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Category',
+              icon: Database,
+              path: '/categories',
+              show: ['Admin', 'Manager', 'Procurement Officer', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Vendor',
+              icon: Users,
+              path: '/vendors',
+              show: ['Admin', 'Manager', 'Procurement Officer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: "RFQ's",
+              icon: ClipboardList,
+              path: '/rfqs',
+              show: ['Admin', 'Procurement Officer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Submitted Quotation',
+              icon: FileText,
+              path: user?.role?.name === 'Vendor' ? '/vendor-quotations' : '/submitted-quotations',
+              show: ['Admin', 'Procurement Officer', 'Manager', 'Financer', 'Vendor'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Approvals',
+              icon: ClipboardCheck,
+              path: '/approvals',
+              show: ['Admin', 'Procurement Officer', 'Manager', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Purchase Order',
+              icon: ShoppingCart,
+              path: '/purchase-orders',
+              show: ['Admin', 'Manager', 'Procurement Officer', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Vendor Bills',
+              icon: FileText,
+              path: '/bills',
+              show: ['Admin', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'Report & Analysis',
+              icon: TrendingUp,
+              path: '/reports',
+              show: ['Admin', 'Manager', 'Financer'].includes(user?.role?.name || ''),
+            },
+            {
+              name: 'System Audit',
+              icon: Settings,
+              path: '/system-audits',
+              show: user?.role?.name === 'Admin',
+            },
+            {
+              name: 'User Management',
+              icon: Users,
+              path: '/users',
+              show: user?.role?.name === 'Admin',
+            }
+          ].filter(item => item.show).map(item => (
+            <a key={item.name} href={item.path} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <item.icon className={`h-4 w-4 ${item.name === 'Dashboard' ? 'text-[#2563EB]' : ''}`} />
+              <span>{item.name}</span>
+            </a>
+          ))}
         </nav>
 
         {/* User Card inside Sidebar */}
@@ -139,7 +140,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, showBack }) => {
       </aside>
 
       {/* Main Panel */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden print:overflow-visible print:block">
         {/* Top Header */}
         <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 shadow-sm transition-colors print:hidden">
           <div className="flex items-center gap-4">
@@ -157,6 +158,39 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, showBack }) => {
           </div>
 
           <div className="flex items-center gap-4">
+            {user && (
+              <div className="relative">
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors"
+                >
+                  <Bell className="h-5 w-5" />
+                  {notifications.length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-red-500"></span>
+                  )}
+                </button>
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-xl z-50 overflow-hidden animate-fadeIn">
+                    <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-3">
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">Notifications</h3>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.length > 0 ? (
+                        notifications.map((n, i) => (
+                          <div key={i} className="px-4 py-3 border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                            <p className="text-xs font-semibold text-slate-900 dark:text-white mb-0.5">{n.action} - {n.entity}</p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">{n.message}</p>
+                            <p className="text-[9px] text-slate-400 mt-1 uppercase tracking-wider">{new Date(n.time).toLocaleString()}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-4 text-center text-xs text-slate-500">No new notifications.</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <button 
               onClick={toggleTheme}
               className="flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors"
@@ -191,7 +225,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, showBack }) => {
         </header>
 
         {/* Content canvas */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 text-slate-900 dark:text-slate-200 print:p-0 print:overflow-visible">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 text-slate-900 dark:text-slate-200 print:p-0 print:overflow-visible print:block">
           {children}
         </main>
       </div>

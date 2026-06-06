@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import Dict, Any
 
-from backend.app.core.database import get_db
-from backend.app.api.endpoints.auth import get_current_user
+from backend.app.api.deps import get_db, get_current_user
 from backend.app.models.user import User
 from backend.app.models.role import Role
 from backend.app.models.rfq import RFQ
 from backend.app.models.quotation import Quotation
-from backend.app.models.purchase_order import PurchaseOrder
+from backend.app.models.purchase_order import PurchaseOrder, PurchaseOrderLine
+from backend.app.models.product import Product
 
 router = APIRouter()
 
@@ -22,12 +22,14 @@ def get_dashboard_stats(db: Session = Depends(get_db), current_user: User = Depe
     
     if role_name == "Admin":
         total_users = db.query(User).count()
-        total_roles = db.query(Role).count()
+        open_pos = db.query(PurchaseOrder).count()
+        pending_approvals = db.query(Quotation).filter(Quotation.status == "Pending").count()
+        active_rfqs = db.query(RFQ).filter(RFQ.status == "Open").count()
         stats = {
             "total_users": total_users,
-            "database_sync": "100%",
-            "api_health": "99.98%",
-            "active_roles": total_roles
+            "open_pos": open_pos,
+            "pending_approvals": pending_approvals,
+            "active_rfqs": active_rfqs
         }
         
     elif role_name == "Procurement Officer":
@@ -93,8 +95,22 @@ def get_reports_data(db: Session = Depends(get_db), current_user: User = Depends
     total_spend = db.query(func.sum(PurchaseOrder.grand_total)).scalar() or 0
     total_pos = db.query(PurchaseOrder).count()
     
+    # Top 10 products on hand
+    top_on_hand = db.query(Product).order_by(Product.on_hand_qty.desc()).limit(10).all()
+    top_on_hand_data = [{"name": p.name, "qty": p.on_hand_qty} for p in top_on_hand]
+
+    # Most purchased products
+    most_purchased = db.query(
+        Product.name,
+        func.sum(PurchaseOrderLine.quantity).label("total_purchased")
+    ).select_from(PurchaseOrderLine).join(Product, PurchaseOrderLine.product_id == Product.id).group_by(Product.name).order_by(func.sum(PurchaseOrderLine.quantity).desc()).limit(10).all()
+    
+    most_purchased_data = [{"name": row.name, "qty": row.total_purchased} for row in most_purchased]
+
     return {
         "vendor_performance": vendor_data,
+        "top_products_on_hand": top_on_hand_data,
+        "most_purchased_products": most_purchased_data,
         "summary": {
             "total_spend": float(total_spend),
             "total_purchase_orders": total_pos

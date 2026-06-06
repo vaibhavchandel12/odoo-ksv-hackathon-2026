@@ -112,11 +112,24 @@ export function CreateRFQ() {
     setSelectedVendors([...vendors]);
   };
 
+  const effectiveStatus = (): string => {
+    // If quotations have been received and status is Sent to Vendor or beyond, show Reviewed Quotations
+    if (quotationCount > 0 && ['Sent to Vendor', 'Reviewed Quotations'].includes(formData.status)) {
+      return 'Reviewed Quotations';
+    }
+    return formData.status;
+  };
+
   const handleSubmit = async (e: React.FormEvent, status: string) => {
     e.preventDefault();
+    // Auto-advance to Reviewed Quotations if quotations exist
+    let finalStatus = status;
+    if (quotationCount > 0 && status === 'Sent to Vendor') {
+      finalStatus = 'Reviewed Quotations';
+    }
     const payload = {
       ...formData,
-      status,
+      status: finalStatus,
       lines: lines.filter(l => l.product_id.trim() !== ''),
       vendor_ids: selectedVendors.map(v => v.id)
     };
@@ -162,7 +175,7 @@ export function CreateRFQ() {
             
             {['Draft', 'Sent to Vendor', 'Reviewed Quotations'].map((step, index) => {
               const steps = ['Draft', 'Sent to Vendor', 'Reviewed Quotations', 'PO Created'];
-              const currentIdx = steps.indexOf(formData.status) === -1 ? 0 : steps.indexOf(formData.status);
+              const currentIdx = steps.indexOf(effectiveStatus()) === -1 ? 0 : steps.indexOf(effectiveStatus());
               const isCompleted = index < currentIdx;
               const isActive = index === currentIdx;
               
@@ -180,6 +193,26 @@ export function CreateRFQ() {
             })}
           </div>
         </div>
+
+        {/* Status Badge when Reviewed */}
+        {effectiveStatus() === 'Reviewed Quotations' && (
+          <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-900/30 px-5 py-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Quotations Received</p>
+              <p className="text-xs text-emerald-600/80 dark:text-emerald-500">{quotationCount} vendor quotation{quotationCount !== 1 ? 's' : ''} submitted — RFQ moved to Reviewed Quotations</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate(`/submitted-quotations?rfq_id=${id}`)}
+              className="ml-auto text-xs font-semibold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              View Quotations →
+            </button>
+          </div>
+        )}
 
         <div className="bg-white dark:bg-slate-900/40 backdrop-blur-lg p-8 rounded-2xl shadow-xl border border-white/50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

@@ -32,7 +32,7 @@ export function ProductCard({ product, onEdit, onDelete }: ProductCardProps) {
       )}
       <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">{product.name}</h3>
       <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-        <span className="font-medium text-emerald-600">₹{product.cost.toFixed(2)}</span>
+        <span className="font-medium text-emerald-600">₹{product.cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
         <span>Qty: {product.on_hand_qty}</span>
       </div>
       {(onEdit || onDelete) && (

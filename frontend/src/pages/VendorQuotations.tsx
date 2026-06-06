@@ -197,7 +197,7 @@ export function VendorQuotations() {
                         </td>
                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{q.rfq_title}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{q.lines.length} items</td>
-                        <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{totalValue.toFixed(2)}</td>
+                        <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">₹{totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                         <td className="px-6 py-4">{getStatusBadge(q.status)}</td>
                         <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{new Date(q.created_at).toLocaleDateString()}</td>
                       </tr>
@@ -224,8 +224,8 @@ export function VendorQuotations() {
                                         <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{line.product_name}</td>
                                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.vendor_code}</td>
                                         <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{line.quantity}</td>
-                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">₹{line.price.toFixed(2)}</td>
-                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">₹{(line.price * line.quantity).toFixed(2)}</td>
+                                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">₹{line.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                        <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">₹{(line.price * line.quantity).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{line.lead_time_days ? `${line.lead_time_days} days` : '-'}</td>
                                       </tr>
                                     ))}
