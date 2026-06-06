@@ -14,6 +14,13 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
 
+class UserPublicSignup(BaseModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    phone: str | None = None
+    password: str = Field(..., min_length=8)
+
 class UserUpdate(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
@@ -32,6 +39,7 @@ class UserResponse(BaseModel):
     role_id: uuid.UUID
     role: Role | None = None
     is_active: bool
+    last_login: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -46,4 +54,5 @@ class UserListResponse(BaseModel):
     phone: str | None = None
     role_name: str
     is_active: bool
+    last_login: datetime | None = None
     created_at: datetime

@@ -6,6 +6,11 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
+import { Products } from './pages/Products';
+import { Categories } from './pages/Categories';
+import { ProductCreate } from './pages/ProductCreate';
+import { CategoryCreate } from './pages/CategoryCreate';
+import { UserManagement } from './pages/UserManagement';
 
 function App() {
   return (
@@ -18,12 +23,27 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
+          {/* Product & Category Routes (Public for now) */}
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/create" element={<ProductCreate />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/categories/create" element={<CategoryCreate />} />
+
           {/* Role-Based Protected Dashboards */}
           <Route 
             path="/dashboard/:role" 
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/users" 
+            element={
+              <ProtectedRoute>
+                <UserManagement />
               </ProtectedRoute>
             } 
           />

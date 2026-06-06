@@ -4,7 +4,7 @@ from backend.app.core.config import settings
 from backend.app.core.database import engine, SessionLocal
 from backend.app.models.base import Base
 from backend.app.models.role import Role
-from backend.app.api.endpoints import auth, users, roles
+from backend.app.api.endpoints import auth, users, roles, categories, products
 
 # Auto-create tables (useful for local SQLite fallback and initializing postgres)
 Base.metadata.create_all(bind=engine)
@@ -42,6 +42,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(roles.router, prefix=f"{settings.API_V1_STR}/roles", tags=["roles"])
+app.include_router(categories.router, prefix=f"{settings.API_V1_STR}/categories", tags=["categories"])
+app.include_router(products.router, prefix=f"{settings.API_V1_STR}/products", tags=["products"])
 
 @app.get("/")
 def root():

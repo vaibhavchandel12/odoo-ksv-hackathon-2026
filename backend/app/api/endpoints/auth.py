@@ -20,7 +20,7 @@ from backend.app.schemas.auth import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
 )
-from backend.app.schemas.user import UserCreate
+from backend.app.schemas.user import UserPublicSignup
 
 router = APIRouter()
 logger = logging.getLogger("vendorbridge.auth")
@@ -35,8 +35,8 @@ def create_reset_token(email: str) -> str:
     )
 
 @router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-def signup(user_in: UserCreate, db: Session = Depends(deps.get_db)):
-    """Registers a new user and returns access and refresh JWTs."""
+def signup(user_in: UserPublicSignup, db: Session = Depends(deps.get_db)):
+    """Registers a new user as a Vendor and returns access and refresh JWTs."""
     user = db.query(User).filter(User.email == user_in.email).first()
     if user:
         raise HTTPException(
@@ -44,11 +44,12 @@ def signup(user_in: UserCreate, db: Session = Depends(deps.get_db)):
             detail="A user with this email already exists."
         )
     
-    role = db.query(Role).filter(Role.id == user_in.role_id).first()
+    # Hardcode role to Vendor for public signups
+    role = db.query(Role).filter(Role.name == "Vendor").first()
     if not role:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The selected role does not exist."
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Vendor role not found in the system."
         )
         
     db_user = User(
@@ -57,8 +58,8 @@ def signup(user_in: UserCreate, db: Session = Depends(deps.get_db)):
         email=user_in.email,
         phone=user_in.phone,
         password_hash=get_password_hash(user_in.password),
-        role_id=user_in.role_id,
-        is_active=user_in.is_active,
+        role_id=role.id,
+        is_active=True, # Active by default
     )
     db.add(db_user)
     db.commit()
@@ -87,6 +88,9 @@ def login(login_in: LoginRequest, db: Session = Depends(deps.get_db)):
             detail="User is deactivated"
         )
         
+    user.last_login = datetime.now(timezone.utc)
+    db.commit()
+    
     access_token = create_access_token(user.id)
     refresh_token = create_refresh_token(user.id)
     return {

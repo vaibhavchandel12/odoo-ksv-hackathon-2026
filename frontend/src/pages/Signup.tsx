@@ -16,7 +16,6 @@ const signupSchema = z.object({
   phone: z.string().min(6, 'Please enter a valid contact phone number'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string().min(1, 'Confirm password is required'),
-  role_id: z.string().min(1, 'Role assignment is required'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -40,23 +39,9 @@ export const Signup: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Fetch roles from the backend
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const res = await api.get<Role[]>('/roles');
-        if (res.data) {
-          setRoles(res.data);
-        }
-      } catch (err) {
-        console.error('Failed to load roles', err);
-      } finally {
-        setLoadingRoles(false);
-      }
-    };
-    fetchRoles();
-  }, []);
-
+  // Fetch roles from the backend (not needed anymore for signup, but kept for context if needed later)
+  // Or actually, just removed fetching roles.
+  
   const {
     register,
     handleSubmit,
@@ -72,7 +57,6 @@ export const Signup: React.FC = () => {
       phone: '',
       password: '',
       confirmPassword: '',
-      role_id: '',
     },
   });
 
@@ -105,9 +89,8 @@ export const Signup: React.FC = () => {
       const res = await signup(signupPayload);
       
       if (res.success) {
-        // Find role name to redirect
-        const selectedRoleName = roles.find((r) => r.id === data.role_id)?.name || '';
-        navigate(getDashboardRedirect(selectedRoleName), { replace: true });
+        // Automatically route to vendor dashboard since public signup defaults to Vendor
+        navigate(getDashboardRedirect('Vendor'), { replace: true });
       } else {
         setErrorMsg(res.error || 'Failed to complete registration.');
       }
@@ -122,7 +105,6 @@ export const Signup: React.FC = () => {
     { label: 'Personal', icon: User },
     { label: 'Contact', icon: Phone },
     { label: 'Account', icon: Lock },
-    { label: 'Role', icon: Briefcase },
   ];
 
   return (
@@ -196,7 +178,7 @@ export const Signup: React.FC = () => {
               Create Enterprise Account
             </h2>
             <p className="text-sm text-slate-500">
-              Step {step} of 4: Fill in your {stepsHeader[step - 1].label.toLowerCase()} details.
+              Step {step} of 3: Fill in your {stepsHeader[step - 1].label.toLowerCase()} details.
             </p>
           </div>
 
@@ -330,41 +312,7 @@ export const Signup: React.FC = () => {
               </div>
             )}
 
-            {/* Step 4: Role Assignment */}
-            {step === 4 && (
-              <div className="space-y-4 animate-fadeIn">
-                <div className="space-y-1">
-                  <label htmlFor="role_id" className="text-xs font-semibold text-slate-700 uppercase">
-                    Select Your Corporate Role
-                  </label>
-                  {loadingRoles ? (
-                    <div className="flex items-center gap-2 text-sm text-slate-500 py-3">
-                      <Loader2 className="h-4 w-4 animate-spin text-[#2563EB]" />
-                      <span>Loading roles...</span>
-                    </div>
-                  ) : (
-                    <select
-                      id="role_id"
-                      className={`block w-full rounded-lg border bg-white px-3.5 py-3 text-sm text-slate-900 shadow-sm outline-none cursor-pointer ${
-                        errors.role_id ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-[#2563EB]'
-                      }`}
-                      {...register('role_id')}
-                    >
-                      <option value="">-- Choose Corporate Role --</option>
-                      {roles.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name} - {r.description}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {errors.role_id && (
-                    <p className="text-xs font-medium text-red-600">{errors.role_id.message}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
+            {/* Removed Step 4: Role Assignment */}
             {/* Action Buttons */}
             <div className="flex justify-between items-center pt-4 border-t border-slate-100">
               {step > 1 ? (
@@ -380,7 +328,7 @@ export const Signup: React.FC = () => {
                 <div></div>
               )}
 
-              {step < 4 ? (
+              {step < 3 ? (
                 <button
                   type="button"
                   onClick={nextStep}

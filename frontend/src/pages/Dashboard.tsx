@@ -49,9 +49,19 @@ export const Dashboard: React.FC = () => {
             <span>Dashboard</span>
           </a>
 
+          <a href="/products" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+            <ShoppingCart className="h-4 w-4" />
+            <span>Products</span>
+          </a>
+          
+          <a href="/categories" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+            <Database className="h-4 w-4" />
+            <span>Categories</span>
+          </a>
+
           {user?.role?.name === 'Admin' && (
             <>
-              <a href="#" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+              <a href="/users" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <Users className="h-4 w-4" />
                 <span>User Management</span>
               </a>
